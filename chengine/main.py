@@ -14,7 +14,7 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_string("game", "chess", "Name of the game")
 flags.DEFINE_integer("players", None, "Number of players")
-flags.DEFINE_string("load_state", "chengine/tests/promote_test_0.txt",
+flags.DEFINE_string("load_state", None,
                     "A file containing a string to load a specific state")
 def main(_):
     print("Creating game: " + FLAGS.game)
@@ -58,12 +58,29 @@ def main(_):
     
     
 def run_computer_tests():
+    game = pyspiel.load_game("chess")
+        
+    # state = game.new_initial_state("8/1P6/1k3K2/8/8/8/8/8 w - - 0 1")
+    # minimax = Minimax()
+    # move, e = minimax.test(state)
+    
+    # action_string = state.action_to_string(state.current_player(), move)
+    # assert action_string == "b8=Q+"
+    # assert e.score == 9
+    
+    state = game.new_initial_state("1rkb3r/1ppp4/8/1N6/8/8/PPP5/1K6 w - - 0 1")
     minimax = Minimax()
-    minimax.test()
+    move, e = minimax.test(state)
+    
+    action_string = state.action_to_string(state.current_player(), move)
+    assert action_string == "Na7#"
+    assert e.score == 10000
 
 if __name__ == "__main__":
-  app.run(main)
-  if len(sys.argv) >= 2:
+  
+    if len(sys.argv) >= 2:
         if sys.argv[1] == "comptest":
             run_computer_tests()
+    else:
+        app.run(main)
             

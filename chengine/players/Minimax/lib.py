@@ -1,5 +1,6 @@
 from typing import List
 from src.lib import Eval
+import re
 
 def max_agg(evals: List[Eval]) -> Eval:
     maximum = evals[0]

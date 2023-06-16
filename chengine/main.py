@@ -3,7 +3,7 @@ from absl import app
 from absl import flags
 import numpy as np
 
-from players.Minimax.player import Minimax
+from .players.Minimax.player import Minimax
 
 import sys
 
@@ -70,7 +70,7 @@ def run_computer_tests():
     
     state = game.new_initial_state("1rkb3r/1ppp4/8/1N6/8/8/PPP5/1K6 w - - 0 1")
     minimax = Minimax()
-    move, e = minimax.test(state)
+    move, e = minimax.move(state)
     
     action_string = state.action_to_string(state.current_player(), move)
     assert action_string == "Na7#"

@@ -1,7 +1,9 @@
 from .lib import min_agg, max_agg, calc_balance
-from src.lib import Eval
+from ...types.Eval import Eval
 
-def get_best_move(state) -> int:
+from typing import Tuple
+
+def get_best_move(state) -> Tuple[str, Eval]:
     moves = state.legal_actions(state.current_player())
     best_move = None
     best_eval = Eval(score=0,nodes=0)

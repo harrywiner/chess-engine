@@ -2,3 +2,4 @@ venv/
 myproject.egg-info/
 **/__pycache__
 .vscode/**
+chess-env

@@ -64,14 +64,15 @@ def run_computer_tests():
     # minimax = Minimax()
     # move, e = minimax.test(state)
     
-    # action_string = state.action_to_string(state.current_player(), move)
-    # assert action_string == "b8=Q+"
-    # assert e.score == 9
     
     state = game.new_initial_state("1rkb3r/1ppp4/8/1N6/8/8/PPP5/1K6 w - - 0 1")
     minimax = Minimax()
     move, e = minimax.move(state)
     
+    action_string = state.action_to_string(state.current_player(), move)
+    print(move)
+    assert action_string == "b8=Q+"
+    assert e.score == 9
     action_string = state.action_to_string(state.current_player(), move)
     assert action_string == "Na7#"
     assert e.score == 10000

@@ -17,6 +17,14 @@ to run tests
 python3 chengine/main.py comptest
 ```
 
+Post module change
+
+```bash
+    python3 -m chengine.main
+    python3 -m chengine.main.runtest
+    python3 -m chengine.tests.runtest
+```
+
 ### Developers guide
 
 Game is adjudicated in `chengine/main.py`
@@ -28,6 +36,8 @@ To add a new player, make a new folder within players
 
 To activate macOS/Linux, use the command: `source env_name/bin/activate`
 To activate Windows, use the command: `env_name\Scripts\activate`
+
+[Read this to create using VSCode](https://code.visualstudio.com/docs/python/environments)
 
 ### Package Management
 

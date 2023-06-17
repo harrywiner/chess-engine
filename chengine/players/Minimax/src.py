@@ -17,7 +17,7 @@ def get_best_move(state) -> Tuple[str, Eval]:
             best_eval = E
     return best_move, best_eval
 
-def search(state, depth=2):
+def search(state, depth=3):
     if depth == 0:
         return Eval(score=shannon_evaluation(state), nodes=1)
     elif state.is_terminal():

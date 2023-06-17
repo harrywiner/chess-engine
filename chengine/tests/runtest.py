@@ -4,6 +4,7 @@ from ..players.Minimax.player import Minimax
 from ..types.Player import Player
 
 from rich import print
+import time
 
 
 from open_spiel.python import games  # pylint: disable=unused-import
@@ -22,24 +23,37 @@ def run_suite(player: Player):
         correct_moves = test[2].split("|")
         print(correct_moves)
 
+        print(test[1])
+        state = game.new_initial_state(test[1])
+
         for i in range(len(correct_moves), 0, -2):
-            
-            print(test[1])
-            state = game.new_initial_state(test[1])
+
+            # Calculate the move, and calculate the time taken
+            start_time = time.time()
+
             move, e = player.move(state)
             
-            print("Move", move, e)
-            action_string = state.action_to_string(state.current_player(), move)
+            end_time = time.time()
+            duration = end_time - start_time
 
+            action_string = state.action_to_string(state.current_player(), move)
+            print(f"Found move: {action_string} ({move}), with eval {e}, in time(s): {duration}")
+
+            # Test if the move is right
             if action_string != correct_moves[0]:
                 print(f"[bold white]Test {test[0]}[red] failed expected [white]`{correct_moves[0]}`[red] but played [white]`{action_string}`")
                 count_failed += 1
                 passed = False
                 continue;
             if i != 1:
+                # If there are remaining moves
+                # Make the moves on the board
+                state.apply_action(move)
                 print(f"Making opposing move: {correct_moves[1]}")
-                state.apply_action(correct_moves[1])
-                correct_moves = correct_moves[:2]
+
+                state.apply_action(state.string_to_action(correct_moves[1]))
+                
+                correct_moves = correct_moves[2:]
         
         if passed:
             print(f"Test {test[0]} [bold green]passed!")

@@ -1,4 +1,4 @@
-# Chess Engine
+# Chess Engine version 1.1
 Framework for adjudicating a chess match with Computer Agents. 
 
 * Minimax implemented, capable of evaluating material exclusively

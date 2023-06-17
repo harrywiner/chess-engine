@@ -41,3 +41,13 @@ The move notation is standard
 Given that FEN represents who is to-move, the first move is always the move made by the player. The adjudicator will then ask for a response if there are proceeding moves.
 
 player|automated|player|automated|player...
+
+
+## Results
+
+Minimax 1.1 passed Checkmate_test_0 with the following times (seconds)
+* 3.42
+* 70.80
+(Each move test 3)
+* 111.60
+* 95.55

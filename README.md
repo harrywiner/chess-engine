@@ -1,4 +1,4 @@
-# Chess Engine version 1.3
+# Chess Engine version 1.4
 
 Framework for adjudicating a chess match with Computer Agents. 
 
@@ -51,6 +51,7 @@ To install from requirements do the following: `pip install -r requirements.txt`
 1.1 - new testing framework and bugfix
 1.2 - alpha beta pruning
 1.3 - changed top level to use pruning. Added best continuation tracker
+1.4 - added late move reduction
 
 ## TO-DO
 

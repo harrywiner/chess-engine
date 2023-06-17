@@ -65,3 +65,10 @@ Minimax 1.3 passed Checkmate_test_0 with the following times (seconds)
 (Each move test 3)
 * 11.146
 * 8.67
+
+Minimax 1.4 passed Checkmate_test_0 with the following times (seconds)
+* 0.000528
+* 0.00108
+(Each move test 3)
+* 1.657
+* 0.000769

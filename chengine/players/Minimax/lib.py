@@ -1,6 +1,7 @@
 from typing import List
 from ...types.Eval import Eval
 import re
+import collections
 
 def max_agg(evals: List[Eval]) -> Eval:
     maximum = evals[0]
@@ -29,3 +30,17 @@ def calc_balance(fen):
     count = material_count(fen)
     balance = [(v * n[0], v * n[1]) for v, n in zip(piece_value, count)]
     return (sum([e[0] for e in balance]), sum([e[1] for e in balance]))
+
+def late_move_reduction(legal_moves_strings):
+    forcing_moves = collections.deque()
+    other_moves = []
+    for move in legal_moves_strings:
+        if '#' in move:
+            return [move]
+        if '+' in move:
+            forcing_moves.appendleft(move)
+        elif 'x' in move:
+            forcing_moves.append(move)
+        else:
+            other_moves.append(move)
+    return list(forcing_moves) + other_moves

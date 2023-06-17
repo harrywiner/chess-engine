@@ -1,4 +1,5 @@
-# Chess Engine version 1.2
+# Chess Engine version 1.3
+
 Framework for adjudicating a chess match with Computer Agents. 
 
 * Minimax implemented, capable of evaluating material exclusively
@@ -44,6 +45,12 @@ To activate Windows, use the command: `env_name\Scripts\activate`
 **The following must be done inside the virtual environment**
 To update the requirements do the following command: `pip freeze > requirements.txt`
 To install from requirements do the following: `pip install -r requirements.txt`
+
+## Changelog 
+
+1.1 - new testing framework and bugfix
+1.2 - alpha beta pruning
+1.3 - changed top level to use pruning. Added best continuation tracker
 
 ## TO-DO
 

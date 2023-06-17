@@ -3,59 +3,64 @@ from ...types.Eval import Eval
 
 from typing import Tuple
 
-def get_best_move(state) -> Tuple[str, Eval]:
-    moves = state.legal_actions(state.current_player())
-    best_move = None
-    best_eval = Eval(score=0,nodes=0)
-    
-    isBetter = lambda e1, e2, player: e1.score > e2.score and player == 1 or e1.score < e2.score and player == 0
-    for m in moves:
-        candidate = state.child(m)
-        E = search(candidate, float("-inf"), float("inf"))
-        if isBetter(E, best_eval, state.current_player()) or not best_move:
-            best_move = m
-            best_eval = E
-    return best_move, best_eval
+def get_best_move(state) -> Tuple[int, Eval]:
+    eval = search(state, float("-inf"), float("inf"))
+    move = int(eval.moves[0])
+    return move, eval
 
-def search(state, alpha, beta, depth=3):
+def search(state, alpha, beta, path=[], depth=4) -> Eval:
+    """
+    state: OpenSpiel state obj
+    alpha: alpha value for alpha-beta pruning
+    beta: beta value for alpha-beta pruning
+    path: the path taken through the game tree (the list of moves made)
+    depth: depth remaining in search
+    """
     if depth == 0:
-        return Eval(score=shannon_evaluation(state), nodes=1)
+        return Eval(score=shannon_evaluation(state), nodes=1, moves=path)
     elif state.is_terminal(): #if checkmate or draw
         #state.returns gives the utility, 1 for white win, -1 for black win, 0 for draw
-        return Eval(score=state.returns()[1] * 10000, nodes=1) 
+        return Eval(score=state.returns()[1] * 10000, nodes=1, moves=path) 
     
-    moves = state.legal_actions(state.current_player())
+    legal_moves = state.legal_actions(state.current_player())
     # 0 means black, 1 means white
     # find min evaluation for black and max evaluation for white
     nodes_checked = 0
-    if state.current_player() == 0:
+    best_move = None
+    if state.current_player() == 0: # black
         evaluation = float('inf')
-        for m in moves:
-            result = search(state.child(m), alpha, beta, depth=depth-1) #Eval obj
+        for m in legal_moves:
+            result = search(state.child(m), alpha, beta, path + [m], depth=depth-1) #Eval obj
 
             nodes_checked += result.nodes
 
-            evaluation = min(evaluation, result.score)
+            if result.score < evaluation:
+                best_move = [m]
+                evaluation = result.score
+            
             beta = min(beta, evaluation)
 
             if beta <= alpha:
                 break;
 
-        return Eval(score=evaluation, nodes=nodes_checked)
-    else:
+        return Eval(score=evaluation, nodes=nodes_checked, moves=path + best_move)
+    else: # white
         evaluation = float('-inf')
-        for m in moves:
-            result = search(state.child(m), alpha, beta, depth=depth-1) #Eval obj
+        for m in legal_moves:
+            result = search(state.child(m), alpha, beta, path + [m], depth=depth-1) #Eval obj
 
             nodes_checked += result.nodes
 
-            evaluation = max(evaluation, result.score)
+            if result.score > evaluation:
+                best_move = [m]
+                evaluation = result.score
+            
             alpha = max(alpha, evaluation)
 
             if beta <= alpha:
                 break;
 
-        return Eval(score=evaluation, nodes=nodes_checked)
+        return Eval(score=evaluation, nodes=nodes_checked, moves=path + best_move)
 
 
 def shannon_evaluation(state):

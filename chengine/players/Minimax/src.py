@@ -17,7 +17,7 @@ def get_best_move(state) -> Tuple[str, Eval]:
             best_eval = E
     return best_move, best_eval
 
-def search(state, depth=3):
+def search(state, depth=2):
     if depth == 0:
         return Eval(score=shannon_evaluation(state), nodes=1)
     elif state.is_terminal():
@@ -26,7 +26,9 @@ def search(state, depth=3):
     moves = state.legal_actions(state.current_player())
     evals = [search(state.child(m), depth=depth-1) 
                    for m in moves]
-    if state.current_player == 0:
+    # 0 means black, 1 means white
+    # find min evaluation for black and max evaluation for white
+    if state.current_player() == 0:
         return min_agg(evals)
     else:
         return max_agg(evals)

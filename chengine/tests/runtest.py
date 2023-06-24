@@ -11,7 +11,7 @@ from open_spiel.python import games  # pylint: disable=unused-import
 import pyspiel
 
 def run_suite(player: Player):
-    tests = read_csv("./chengine/tests/positions/checkmate_test_0.txt")
+    tests = read_csv("./chengine/tests/positions/endgame_test_0.txt")
 
     count_passed = 0
     count_failed = 0
@@ -44,7 +44,7 @@ def run_suite(player: Player):
                 print(f"[bold white]Test {test[0]}[red] failed expected [white]`{correct_moves[0]}`[red] but played [white]`{action_string}`")
                 count_failed += 1
                 passed = False
-                continue;
+                break;
             if i != 1:
                 # If there are remaining moves
                 # Make the moves on the board

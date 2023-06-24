@@ -23,7 +23,7 @@ The tests consist of 3 parts:
   <summary><p>**Example**</p></summary>
     
     ```csv
-    Simple promotion, 8/1P6/1k3K2/8/8/8/8/8 w - - 0 1, b8=Q+
+    Simple promotion,8/1P6/1k3K2/8/8/8/8/8 w - - 0 1,b8=Q+
     ```
 
 </details>
@@ -72,3 +72,10 @@ Minimax 1.4 passed Checkmate_test_0 with the following times (seconds)
 (Each move test 3)
 * 1.657
 * 0.000769
+
+Minimax 1.4 passed endgame_test_0 with the following times (seconds) with depth 9 
+* b6 8.03s with 22313 nodes
+* c6 8.06s 25463 nodes 
+* a6 25.27s 108416 nodes
+* a7 59.78s 307121 nodes 
+* a8=Q 80.02s 427147 nodes

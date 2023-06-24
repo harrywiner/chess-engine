@@ -60,7 +60,14 @@ def run_suite(player: Player):
             count_passed += 1
     pass
 
+from ..players.Minimax.lib import center_pawn_occupation
+def test_pawn_count(fen):
+    white_pawns, black_pawns = center_pawn_occupation(fen)
+    print(white_pawns, ", ", black_pawns)
 
+    assert white_pawns == 0
+    assert black_pawns == 1
 
+# test_pawn_count("rnbqkb1r/ppp2ppp/8/3pN3/2B1n3/8/PPPP1PPP/RNBQK2R w KQkq - 0 5")
 
 run_suite(Minimax())

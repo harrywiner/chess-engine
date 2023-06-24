@@ -1,23 +1,57 @@
-from typing import List
+from typing import List, Tuple
 from ...types.Eval import Eval
 import re
 import collections
+import re
 
-def max_agg(evals: List[Eval]) -> Eval:
-    maximum = evals[0]
-    for e in evals:
-        if e.score > maximum.score:
-            maximum.score = e.score
-        maximum.nodes += e.nodes
-    return maximum
+def evaluate(state) -> Eval:
+    evaluation = 0
+    fen = str(state)
 
-def min_agg(evals: List[Eval]) -> Eval:
-    minimum = evals[0]
-    for e in evals[1:]:
-        if e.score < minimum.score:
-            minimum.score = e.score
-        minimum.nodes += e.nodes
-    return minimum
+    weights = {
+        "material": 1,
+        "occupation": .5
+    }
+
+    # Weighted sum of factors
+
+    material_balance = calc_balance(fen)
+    evaluation += weights["material"] * (material_balance[0] - material_balance[1])
+
+    occupation = center_pawn_occupation(fen)
+    evaluation += weights["occupation"] * (occupation[0] - occupation[1])
+
+    return evaluation
+
+def center_pawn_occupation(fen: str) -> Tuple[int,int]:
+    """
+    @param fen: the fen string for the position
+    @returns: Tuple[white center pawns, black center pawns]
+    """
+    ranks = fen.split("/")
+    center_ranks = ranks[3:5]
+    white_pawns, black_pawns = 0, 0
+
+    # 3pN3/2B1n3
+    for rank in center_ranks:
+        position = 0
+        for piece in rank:
+            #if in center, count the pawns 
+            if position == 3 or position == 4:
+                if piece == 'p':
+                    black_pawns += 1
+                if piece == 'P' :
+                    white_pawns += 1
+
+            if re.match(r'\d', piece):
+                position += int(piece)
+            else: 
+                position += 1
+    return white_pawns, black_pawns
+
+def shannon_evaluation(state):
+    balance = calc_balance(str(state))
+    return balance[0] - balance[1]
 
 def material_count(fen) -> tuple((int, int)):
     trunc = re.match("([\da-zA-Z]+\/){7}[\da-zA-Z]+", fen).group(0)

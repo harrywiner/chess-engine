@@ -1,4 +1,4 @@
-from .lib import calc_balance, late_move_reduction
+from .lib import evaluate, late_move_reduction
 from ...types.Eval import Eval
 
 from typing import Tuple
@@ -17,7 +17,7 @@ def search(state, alpha, beta, path=[], depth=9) -> Eval:
     depth: depth remaining in search
     """
     if depth == 0:
-        return Eval(score=shannon_evaluation(state), nodes=1, moves=path)
+        return Eval(score=evaluate(state), nodes=1, moves=path)
     elif state.is_terminal(): #if checkmate or draw
         #state.returns gives the utility, 1 for white win, -1 for black win, 0 for draw
         return Eval(score=state.returns()[1] * 10000, nodes=1, moves=path) 
@@ -67,6 +67,3 @@ def search(state, alpha, beta, path=[], depth=9) -> Eval:
         return Eval(score=evaluation, nodes=nodes_checked, moves=path + best_move)
 
 
-def shannon_evaluation(state):
-    balance = calc_balance(str(state))
-    return balance[0] - balance[1]

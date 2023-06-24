@@ -52,6 +52,7 @@ To install from requirements do the following: `pip install -r requirements.txt`
 1.2 - alpha beta pruning
 1.3 - changed top level to use pruning. Added best continuation tracker
 1.4 - added late move reduction
+1.4.1 - changed late move reduction to prioritise queen promotion
 
 ## TO-DO
 

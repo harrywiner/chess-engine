@@ -8,7 +8,7 @@ def get_best_move(state) -> Tuple[int, Eval]:
     move = int(eval.moves[0])
     return move, eval
 
-def search(state, alpha, beta, path=[], depth=4) -> Eval:
+def search(state, alpha, beta, path=[], depth=9) -> Eval:
     """
     state: OpenSpiel state obj
     alpha: alpha value for alpha-beta pruning

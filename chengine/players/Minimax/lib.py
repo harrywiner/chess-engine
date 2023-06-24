@@ -37,7 +37,7 @@ def late_move_reduction(legal_moves_strings):
     for move in legal_moves_strings:
         if '#' in move:
             return [move]
-        if '+' in move:
+        if '+' in move or "=Q" in move:
             forcing_moves.appendleft(move)
         elif 'x' in move:
             forcing_moves.append(move)

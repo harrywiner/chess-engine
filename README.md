@@ -1,4 +1,4 @@
-# Chess Engine version 1.4
+# Chess Engine version 1.4.1
 
 Framework for adjudicating a chess match with Computer Agents. 
 

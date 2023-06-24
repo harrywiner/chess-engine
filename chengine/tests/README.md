@@ -79,3 +79,10 @@ Minimax 1.4 passed endgame_test_0 with the following times (seconds) with depth 
 * a6 25.27s 108416 nodes
 * a7 59.78s 307121 nodes 
 * a8=Q 80.02s 427147 nodes
+
+Minimax 1.4.1 passed endgame_test_0 with the following times with depth 9
+* b6 13.708 with 10954 nodes
+* c6 7.878s with 6557 nodes
+* a6 13.10s with 31923 nodes 
+* a7 36.12s with 189147 nodes
+* a8=Q 43.95s with 268721 nodes 

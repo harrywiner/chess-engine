@@ -1,4 +1,4 @@
-from .lib import evaluate, late_move_reduction
+from .evaluation import evaluate, late_move_reduction
 from ...types.Eval import Eval
 
 from typing import Tuple

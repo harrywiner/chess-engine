@@ -1,4 +1,4 @@
-from .src import get_best_move
+from .search import get_best_move
 from ...types.Player import Player
 from ...types.Eval import Eval
 from typing import Tuple

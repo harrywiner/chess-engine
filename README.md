@@ -1,4 +1,4 @@
-# Chess Engine version 1.5
+# Chess Engine version 1.7
 
 Framework for adjudicating a chess match with Computer Agents. 
 
@@ -56,6 +56,7 @@ To install from requirements do the following: `pip install -r requirements.txt`
 1.5 - added new evaluation function that combines different heuristics. Added pawn occupation heuristic
 1.5.1 - added preprocessing step to convert fen into matrix
 1.6 - added temporal advantage including a to-move bonus and piece development heuristic
+1.7 - added king safety heuristics
 ## TO-DO
 
 Minimax

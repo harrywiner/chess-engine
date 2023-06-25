@@ -1,6 +1,7 @@
 # Chess Engine version 1.7
 
 Framework for adjudicating a chess match with Computer Agents. 
+A pair programming effort with [Joyce Lee](github.com/joyce-leesw) 
 
 * Minimax implemented, capable of evaluating material exclusively
     * passes promotion test

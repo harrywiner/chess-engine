@@ -3,12 +3,12 @@ from ...types.Eval import Eval
 
 from typing import Tuple
 
-def get_best_move(state) -> Tuple[int, Eval]:
-    eval = search(state, float("-inf"), float("inf"))
+def get_best_move(state, depth=5) -> Tuple[int, Eval]:
+    eval = search(state, float("-inf"), float("inf"), depth=depth)
     move = int(eval.moves[0])
     return move, eval
 
-def search(state, alpha, beta, path=[], depth=9) -> Eval:
+def search(state, alpha, beta, path=[], depth=5) -> Eval:
     """
     state: OpenSpiel state obj
     alpha: alpha value for alpha-beta pruning

@@ -10,8 +10,8 @@ import time
 from open_spiel.python import games  # pylint: disable=unused-import
 import pyspiel
 
-def run_suite(player: Player):
-    tests = read_csv("./chengine/tests/positions/endgame_test_0.txt")
+def run_suite(player: Player, test_name = "checkmate_test", base_dir = "./chengine/tests/positions/", depth = 5):
+    tests = read_csv(base_dir + test_name + ".txt")
 
     count_passed = 0
     count_failed = 0
@@ -31,7 +31,7 @@ def run_suite(player: Player):
             # Calculate the move, and calculate the time taken
             start_time = time.time()
 
-            move, e = player.move(state)
+            move, e = player.move(state, depth)
             
             end_time = time.time()
             duration = end_time - start_time
@@ -70,4 +70,23 @@ def test_pawn_count(fen):
 
 # test_pawn_count("rnbqkb1r/ppp2ppp/8/3pN3/2B1n3/8/PPPP1PPP/RNBQK2R w KQkq - 0 5")
 
-run_suite(Minimax())
+import sys
+
+def process_command_line_arguments():
+    if len(sys.argv) < 3:
+        return None
+
+    test_name = sys.argv[1]
+    depth = sys.argv[2]
+
+    # Use the test_name and depth variables for further processing
+    return test_name, depth
+
+if __name__ == '__main__':
+
+    args = process_command_line_arguments()
+    if args == None:
+        run_suite(Minimax())
+
+    else:
+        run_suite(Minimax(), test_name=args[0], depth=int(args[1]))

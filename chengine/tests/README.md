@@ -1,6 +1,10 @@
-# Tests
+# Test Runner 1.1
 
 > This is the testing framework for the ChessBot
+
+### Changelog
+1.0 basic test running functionality
+1.1 Added command line argument functionality to specify test and depth
 
 ## Test format
 

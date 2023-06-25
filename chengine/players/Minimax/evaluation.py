@@ -1,8 +1,8 @@
 from typing import List, Tuple
 from ...types.Eval import Eval
+from ...types.Board import Board
 import re
 import collections
-import re
 
 def evaluate(state) -> Eval:
     evaluation = 0
@@ -13,40 +13,50 @@ def evaluate(state) -> Eval:
         "occupation": .5
     }
 
+    piece_matrix = build_piece_matrix(fen)
+
     # Weighted sum of factors
 
     material_balance = calc_balance(fen)
     evaluation += weights["material"] * (material_balance[0] - material_balance[1])
 
-    occupation = center_pawn_occupation(fen)
+    board = build_piece_matrix(fen)
+    occupation = center_pawn_occupation(board)
     evaluation += weights["occupation"] * (occupation[0] - occupation[1])
 
     return evaluation
 
-def center_pawn_occupation(fen: str) -> Tuple[int,int]:
+def build_piece_matrix(fen) -> Board:
+
+    # Get rid of the metadata at the end
+    trunc = fen.split(" ")[0]
+
+    ranks = trunc.split("/")[::-1]
+
+    out = [[] for _ in range(len(ranks))]
+
+    for i in range(len(ranks)):
+        for piece in ranks[i]:
+            if re.match(r'\d', piece):
+                out[i] += ["" for _ in range(int(piece))]
+            else:
+                out[i] += piece
+    return out
+
+def center_pawn_occupation(board: Board) -> Tuple[int,int]:
     """
     @param fen: the fen string for the position
     @returns: Tuple[white center pawns, black center pawns]
     """
-    ranks = fen.split("/")
-    center_ranks = ranks[3:5]
+    center_ranks = board[3:5]
     white_pawns, black_pawns = 0, 0
 
-    # 3pN3/2B1n3
     for rank in center_ranks:
-        position = 0
-        for piece in rank:
-            #if in center, count the pawns 
-            if position == 3 or position == 4:
-                if piece == 'p':
-                    black_pawns += 1
-                if piece == 'P' :
-                    white_pawns += 1
-
-            if re.match(r'\d', piece):
-                position += int(piece)
-            else: 
-                position += 1
+        for i in range(3, 5):
+            if rank[i] == 'p':
+                black_pawns += 1
+            if rank[i] == 'P':
+                white_pawns += 1
     return white_pawns, black_pawns
 
 def shannon_evaluation(state):

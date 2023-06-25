@@ -60,15 +60,16 @@ def run_suite(player: Player, test_name = "checkmate_test", base_dir = "./chengi
             count_passed += 1
     pass
 
-from ..players.Minimax.evaluation import center_pawn_occupation
+from ..players.Minimax.evaluation import center_pawn_occupation, build_piece_matrix
 def test_pawn_count(fen):
-    white_pawns, black_pawns = center_pawn_occupation(fen)
+    board = build_piece_matrix(fen)
+    white_pawns, black_pawns = center_pawn_occupation(board)
     print(white_pawns, ", ", black_pawns)
 
     assert white_pawns == 0
     assert black_pawns == 1
 
-# test_pawn_count("rnbqkb1r/ppp2ppp/8/3pN3/2B1n3/8/PPPP1PPP/RNBQK2R w KQkq - 0 5")
+test_pawn_count("rnbqkb1r/ppp2ppp/8/3pN3/2B1n3/8/PPPP1PPP/RNBQK2R w KQkq - 0 5")
 
 import sys
 

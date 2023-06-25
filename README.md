@@ -54,7 +54,7 @@ To install from requirements do the following: `pip install -r requirements.txt`
 1.4 - added late move reduction
 1.4.1 - changed late move reduction to prioritise queen promotion
 1.5 - added new evaluation function that combines different heuristics. Added pawn occupation heuristic
-
+1.5.1 - added preprocessing step to convert fen into matrix
 ## TO-DO
 
 Minimax

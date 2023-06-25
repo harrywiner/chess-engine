@@ -12,7 +12,9 @@ def evaluate(state) -> Eval:
         "material": 1,
         "occupation": .5,
         "to_move": .3,
-        "minor_pieces_developed": .3
+        "minor_pieces_developed": .3,
+        "king_in_center_and_no_castle": 1.5,
+        "king_not_backrank_and_in_center": 1.5
     }
 
     # Preprocessing
@@ -36,8 +38,25 @@ def evaluate(state) -> Eval:
     evaluation += weights["to_move"] * (-1 if state.current_player() == 0 else 1)
     minor_pieces_developed = minor_piece_development(piece_positions)
     evaluation += weights["minor_pieces_developed"] * (minor_pieces_developed[0] - minor_pieces_developed[1])
-    
+
+    # King Safety
+    castle = can_castle(fen)
+    k_center = king_in_center(piece_positions)
+
+    # if the king is in the center and can castle, then he's okay
+    # if the king is not in the center, and he can't castle, then he's still okay
+    # if he is in the center, and cannot castle, then he's screwed
+    evaluation += weights["king_in_center_and_no_castle"] * ((castle[0] == k_center[0]) - (castle[1] == k_center[1]))
+
+    k_not_backrank = king_not_backrank(piece_positions)
+
+    # if the king is not in the backrank 
+    evaluation += weights["king_not_backrank_and_in_center"] * ((not(k_not_backrank[0] and k_center[0])) - (not(k_not_backrank[1] and k_center[0])))
+
     return evaluation
+
+
+# Helpers
 
 def build_position_map(board: Board) -> dict:
     """
@@ -118,6 +137,24 @@ def material_count(fen) -> Tuple[int, int]:
     codes = ["k", "q", "r", "n", "b", "p"]
     
     return [(len(re.findall(c.upper(), trunc)), len(re.findall(c, trunc))) for c in codes]
+
+def can_castle(fen) -> Tuple[bool,bool]:
+    """
+    @returns Tuple[bool,bool] for if either side can castle in either direction
+    """
+
+    castle_string = fen.split(" ")[2]
+
+    return "K" in castle_string or "Q" in castle_string, "k" in castle_string or "q" in castle_string
+
+def king_in_center(positions) -> Tuple[bool,bool]:
+    return positions["K"][0][1] in [3,4,5], positions["k"][0][1] in [3,4,5]
+
+def king_not_backrank(positions) -> Tuple[bool,bool]:
+    return positions["K"][0][0] != 0, positions["k"][0][0] != 7
+
+def king_third_rank(positions) -> Tuple[bool,bool]:
+    return positions["K"][0][0] >= 2, positions["k"][0][0] <= 5
 
 def calc_balance(fen):
     piece_value = [200, 9, 5, 3, 3, 1]

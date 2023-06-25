@@ -60,9 +60,11 @@ def run_suite(player: Player, test_name = "checkmate_test", base_dir = "./chengi
             count_passed += 1
     pass
 
-from ..players.Minimax.evaluation import center_pawn_occupation, build_piece_matrix
+from ..players.Minimax.evaluation import center_pawn_occupation, build_piece_matrix, build_position_map
 def test_pawn_count(fen):
     board = build_piece_matrix(fen)
+    positions = build_position_map(board)
+    print(positions)
     white_pawns, black_pawns = center_pawn_occupation(board)
     print(white_pawns, ", ", black_pawns)
 

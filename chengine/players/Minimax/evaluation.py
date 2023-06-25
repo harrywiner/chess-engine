@@ -2,7 +2,7 @@ from typing import List, Tuple
 from ...types.Eval import Eval
 from ...types.Board import Board
 import re
-import collections
+import collections 
 
 def evaluate(state) -> Eval:
     evaluation = 0
@@ -10,21 +10,56 @@ def evaluate(state) -> Eval:
 
     weights = {
         "material": 1,
-        "occupation": .5
+        "occupation": .5,
+        "to_move": .3,
+        "minor_pieces_developed": .3
     }
 
-    piece_matrix = build_piece_matrix(fen)
+    # Preprocessing
+    board = build_piece_matrix(fen)
+    piece_positions = build_position_map(board)
 
     # Weighted sum of factors
 
+    # Material Advantage
     material_balance = calc_balance(fen)
     evaluation += weights["material"] * (material_balance[0] - material_balance[1])
 
-    board = build_piece_matrix(fen)
+    # Positional Advantage
     occupation = center_pawn_occupation(board)
     evaluation += weights["occupation"] * (occupation[0] - occupation[1])
 
+    # Temporal Advantage
+
+    # 1. “The most powerful weapon in Chess is to have the next move.”
+    #    — David Bronstein
+    evaluation += weights["to_move"] * (-1 if state.current_player() == 0 else 1)
+    minor_pieces_developed = minor_piece_development(piece_positions)
+    evaluation += weights["minor_pieces_developed"] * (minor_pieces_developed[0] - minor_pieces_developed[1])
+    
     return evaluation
+
+def build_position_map(board: Board) -> dict:
+    """
+    A dict that stores lists of pieces. 
+    Each value is a list of coordinates corresponding to a single piece
+    Even unique pieces such as Kings are lists for consistency
+
+    The coordinates are (rank, file)
+    -> f6 == (2,5)
+    {
+        N: [(2,2), (5,2)],
+        K: [(4,0)]
+    }
+    """
+
+    piece_positions = collections.defaultdict(list)
+    for r in range(len(board)):
+        for f in range(len(board[r])):
+            if (board[r][f] != ''):
+                piece_positions[board[r][f]].append((r,f))
+    return piece_positions
+
 
 def build_piece_matrix(fen) -> Board:
 
@@ -59,11 +94,26 @@ def center_pawn_occupation(board: Board) -> Tuple[int,int]:
                 white_pawns += 1
     return white_pawns, black_pawns
 
+def minor_piece_development(positions: dict) -> Tuple[int, int]:
+    black_developed, white_developed = 0, 0
+
+    if "N" in positions.keys():
+        white_developed += sum([1 if p[0] != 0 else 0 for p in positions["N"]])
+    if "B" in positions.keys():
+        white_developed += sum([1 if p[0] != 0 else 0 for p in positions["N"]])
+    if "n" in positions.keys():
+        black_developed += sum([1 if p[0] != 7 else 0 for p in positions["n"]])
+    if "b" in positions.keys():
+        black_developed += sum([1 if p[0] != 7 else 0 for p in positions["b"]])
+
+    return white_developed, black_developed
+
+
 def shannon_evaluation(state):
     balance = calc_balance(str(state))
     return balance[0] - balance[1]
 
-def material_count(fen) -> tuple((int, int)):
+def material_count(fen) -> Tuple[int, int]:
     trunc = re.match("([\da-zA-Z]+\/){7}[\da-zA-Z]+", fen).group(0)
     codes = ["k", "q", "r", "n", "b", "p"]
     

@@ -5,3 +5,4 @@ myproject.egg-info/
 chess-env
 build
 chessengine.egg-info
+.venv/

@@ -20,24 +20,26 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 brew install cmake
 ```
 
+Afterwards simply run
+
+```
+uv sync
+source .venv/bin/activate # Unix only
+```
+
 ## Use me
 
-in root directory run the following command to start a random game
+Starting a new game is simple. To play against Minimax run:
+
 ```
-python3 chengine/main.py
-```
-    
-to run tests
-```
-python3 chengine/main.py comptest
+python3 main.py
 ```
 
-Post module change
+To run the test suite, run:
 
-```bash
-    python3 -m chengine.main
-    python3 -m chengine.main.runtest
-    python3 -m chengine.tests.runtest
+```
+python3 main.py test
+python3 main.py test --filename=endgame_test.txt --depth=10
 ```
 
 ### Developers guide
@@ -46,13 +48,6 @@ Game is adjudicated in `chengine/main.py`
 
 Players (agents) are located in `chengine/players`.
 To add a new player, make a new folder within players
-
-## Environment
-
-To activate macOS/Linux, use the command: `source .venv/bin/activate`
-To activate Windows, use the command: `.venv\Scripts\activate`
-
-[Read this to create using VSCode](https://code.visualstudio.com/docs/python/environments)
 
 ## Changelog 
 

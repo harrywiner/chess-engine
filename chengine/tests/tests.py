@@ -23,7 +23,7 @@ def run_test(game, player: Player, test: Test, depth=DEFAULT_DEPTH):
         # Calculate the move, and calculate the time taken
         start_time = time.time()
 
-        move, e = player.move(state, depth)
+        move, e = player.move(state)
         
         end_time = time.time()
         duration = end_time - start_time
@@ -91,7 +91,7 @@ def process_command_line_arguments():
     # Use the test_name and depth variables for further processing
     return test_name, depth
 
-def test_main(player: Player, filename: str | None = None):
+def run_tests(player: Player, filename: str | None = None):
     args = process_command_line_arguments()
 
     if args == None:

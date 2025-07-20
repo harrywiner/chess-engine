@@ -1,6 +1,5 @@
 from typing import List, Tuple
-from ...types.Eval import Eval
-from ...types.Board import Board
+from ...types import Eval, Board
 import re
 import collections 
 

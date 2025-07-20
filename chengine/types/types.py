@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from abc import ABC, abstractmethod
 
 Board = List[List[str]]
@@ -28,4 +28,4 @@ class Eval(BaseModel):
 class Player(BaseModel, ABC):
     name: str
     @abstractmethod
-    def move(self, state): ...
+    def move(self, state) -> tuple[str, Optional[Eval]]: ...

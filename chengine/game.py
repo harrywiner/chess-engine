@@ -1,9 +1,7 @@
 import random
-from absl import app
 from absl import flags
 
 from chengine.types import Player
-from .players import Minimax, Human
 
 import sys
 
@@ -56,46 +54,14 @@ def game_loop(game, state, player1: Player, player2: Player):
     print(f"Coin flip decided {players[coin_flip].name} goes first")
 
     while not state.is_terminal():
-        player_to_move = players[state.current_player()]
-        action = player_to_move.move(state)
-        state.apply_action(action)
+        player_to_move = players[int(state.current_player())]
+        action, e = player_to_move.move(state)
         print(f"Move! Player {player_to_move.name} plays {state.action_to_string(state.current_player(), action)}")
+        if e:
+            print(f"Player {player_to_move.name} evaluates the position as: {e.score}")
+        state.apply_action(action)
         print(f"Current State is: {str(state)}")
 
     returns = state.returns()
     for pid in range(game.num_players()):
-        print("Utility for player {} is {}".format(pid, returns[pid]))
-    
-
-def run_computer_tests():
-    game = pyspiel.load_game("chess")
-        
-    state = game.new_initial_state("8/1P6/1k3K2/8/8/8/8/8 w - - 0 1")
-    minimax = Minimax()
-    move, e = minimax.test(state)
-    
-    action_string = state.action_to_string(state.current_player(), move)
-    print(e)
-    assert action_string == "b8=Q+"
-    assert e.score > 5
-    
-    state = game.new_initial_state("1rkb3r/1ppp4/8/1N6/8/8/PPP5/1K6 w - - 0 1")
-    minimax = Minimax()
-    move, e = minimax.move(state)
-    
-    action_string = state.action_to_string(state.current_player(), move)
-    assert action_string == "Na7#"
-    assert e.score == 10000
-
-def main(*args, **kwargs):
-    game, state = setup_game(*args, **kwargs)
-    game_loop(game, state, Human(), Minimax())
-
-if __name__ == "__main__":
-  
-    if len(sys.argv) >= 2:
-        if sys.argv[1] == "comptest":
-            run_computer_tests()
-    else:
-        app.run(main)
-            
+        print("Utility for player {} is {}".format(pid, returns[pid]))        

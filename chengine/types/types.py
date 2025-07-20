@@ -5,16 +5,19 @@ from abc import ABC, abstractmethod
 Board = List[List[str]]
 
 class Eval(BaseModel):
-    score: int
+    score: float
     nodes: int
-    moves: List[str]
+    moves: List[int]
     
     def __iadd__(self, other):
+        # Eval += Eval
         self.score += other.score
-        self.nodes += other.nodesss
+        self.nodes += other.nodes
         self.moves += other.moves
         return self
+
     def __add__(self, other):
+        # Eval + Eval
         return Eval(score=self.score + other.score, nodes=self.nodes + other.nodes, moves= self.moves + other.moves)
     def average(self):
         return self.score / self.nodes
@@ -25,5 +28,4 @@ class Eval(BaseModel):
 class Player(BaseModel, ABC):
     name: str
     @abstractmethod
-    def move(self, state):
-        pass
+    def move(self, state): ...

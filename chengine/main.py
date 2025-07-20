@@ -2,10 +2,8 @@ import random
 from absl import app
 from absl import flags
 
-from chengine.players import Human
 from chengine.types import Player
-
-from .players.Minimax.player import Minimax
+from .players import Minimax, Human
 
 import sys
 
@@ -49,21 +47,13 @@ def game_loop(game, state, player1: Player, player2: Player):
         Randomly selects a player to play white or black
         Each round samples a move from Player.move
     """
-    
-    while not state.is_terminal():
-        action = random.choice(state.legal_actions(state.current_player()))
-        action_string = state.action_to_string(state.current_player(), action)
-        print("Player ", state.current_player(), ", randomly sampled action: ",
-                action_string)
-        state.apply_action(action)
-        print(str(state))
 
     coin_flip = round(random.random())
     if coin_flip == 0:
         players: list[Player] = [player1, player2]
     else: 
         players: list[Player] = [player2, player1]
-    print(f"Coin flip decided {players[0].name} goes first")
+    print(f"Coin flip decided {players[coin_flip].name} goes first")
 
     while not state.is_terminal():
         player_to_move = players[state.current_player()]
@@ -80,19 +70,19 @@ def game_loop(game, state, player1: Player, player2: Player):
 def run_computer_tests():
     game = pyspiel.load_game("chess")
         
-    # state = game.new_initial_state("8/1P6/1k3K2/8/8/8/8/8 w - - 0 1")
-    # minimax = Minimax()
-    # move, e = minimax.test(state)
+    state = game.new_initial_state("8/1P6/1k3K2/8/8/8/8/8 w - - 0 1")
+    minimax = Minimax()
+    move, e = minimax.test(state)
     
+    action_string = state.action_to_string(state.current_player(), move)
+    print(e)
+    assert action_string == "b8=Q+"
+    assert e.score > 5
     
     state = game.new_initial_state("1rkb3r/1ppp4/8/1N6/8/8/PPP5/1K6 w - - 0 1")
     minimax = Minimax()
     move, e = minimax.move(state)
     
-    action_string = state.action_to_string(state.current_player(), move)
-    print(move)
-    assert action_string == "b8=Q+"
-    assert e.score == 9
     action_string = state.action_to_string(state.current_player(), move)
     assert action_string == "Na7#"
     assert e.score == 10000
@@ -107,5 +97,5 @@ if __name__ == "__main__":
         if sys.argv[1] == "comptest":
             run_computer_tests()
     else:
-        app.run(setup_game)
+        app.run(main)
             

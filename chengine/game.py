@@ -1,5 +1,6 @@
 import random
 from absl import flags
+from rich import print
 
 from chengine.types import Player
 
@@ -45,13 +46,9 @@ def game_loop(game, state, player1: Player, player2: Player):
         Randomly selects a player to play white or black
         Each round samples a move from Player.move
     """
-
-    coin_flip = round(random.random())
-    if coin_flip == 0:
-        players: list[Player] = [player1, player2]
-    else: 
-        players: list[Player] = [player2, player1]
-    print(f"Coin flip decided {players[coin_flip].name} goes first")
+    players = [player1, player2]
+    random.shuffle(players)
+    print(f"Coin flip has decided [bold green]{players[0].name} [white]goes first")
 
     while not state.is_terminal():
         player_to_move = players[int(state.current_player())]

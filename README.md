@@ -62,11 +62,22 @@ To add a new player, make a new folder within players
 1.7 - added king safety heuristics
 ## TO-DO
 
+### Engine
+
 Minimax
-* Satisfy Checkmate tests
 
-* Evaluate positional advantage
+#### Positional advantage
 
-Beyond
+[ ] Map for piece positioning, where each piece is best placed for each color, or for both colors
 
-* Neural Network Solution
+[ ] devalue king safety. Ensure my engine does not like the wayward queen attack
+
+### Interface
+
+[ ] implement openings book
+
+[ ] Implement translator for [UCI](https://en.wikipedia.org/wiki/Universal_Chess_Interface) to work with GUI 
+
+### Parallelisation
+
+[ ] learn to fish, what is required, releasing GIL or using parallelisable language

@@ -1,7 +1,15 @@
 from typing import List, Tuple
-from ...types import Eval, Board
+
+from chengine.players.minimax.logic.helpers import build_piece_matrix
+from chengine.types import Feature, Positions
+from ...types import Eval, BoardMatrix
 import re
-import collections 
+import collections
+
+
+evaluation_matrix: list[Feature] = [
+
+]
 
 def evaluate(state) -> Eval:
     evaluation = 0
@@ -57,7 +65,7 @@ def evaluate(state) -> Eval:
 
 # Helpers
 
-def build_position_map(board: Board) -> dict:
+def build_position_map(board: BoardMatrix) -> Positions:
     """
     A dict that stores lists of pieces. 
     Each value is a list of coordinates corresponding to a single piece
@@ -78,25 +86,7 @@ def build_position_map(board: Board) -> dict:
                 piece_positions[board[r][f]].append((r,f))
     return piece_positions
 
-
-def build_piece_matrix(fen) -> Board:
-
-    # Get rid of the metadata at the end
-    trunc = fen.split(" ")[0]
-
-    ranks = trunc.split("/")[::-1]
-
-    out = [[] for _ in range(len(ranks))]
-
-    for i in range(len(ranks)):
-        for piece in ranks[i]:
-            if re.match(r'\d', piece):
-                out[i] += ["" for _ in range(int(piece))]
-            else:
-                out[i] += piece
-    return out
-
-def center_pawn_occupation(board: Board) -> Tuple[int,int]:
+def center_pawn_occupation(board: BoardMatrix) -> Tuple[int,int]:
     """
     @param fen: the fen string for the position
     @returns: Tuple[white center pawns, black center pawns]
@@ -126,17 +116,6 @@ def minor_piece_development(positions: dict) -> Tuple[int, int]:
 
     return white_developed, black_developed
 
-
-def shannon_evaluation(state):
-    balance = calc_balance(str(state))
-    return balance[0] - balance[1]
-
-def material_count(fen) -> Tuple[int, int]:
-    trunc = re.match("([\da-zA-Z]+\/){7}[\da-zA-Z]+", fen).group(0)
-    codes = ["k", "q", "r", "n", "b", "p"]
-    
-    return [(len(re.findall(c.upper(), trunc)), len(re.findall(c, trunc))) for c in codes]
-
 def can_castle(fen) -> Tuple[bool,bool]:
     """
     @returns Tuple[bool,bool] for if either side can castle in either direction
@@ -155,22 +134,3 @@ def king_not_backrank(positions) -> Tuple[bool,bool]:
 def king_third_rank(positions) -> Tuple[bool,bool]:
     return positions["K"][0][0] >= 2, positions["k"][0][0] <= 5
 
-def calc_balance(fen):
-    piece_value = [200, 9, 5, 3, 3, 1]
-    count = material_count(fen)
-    balance = [(v * n[0], v * n[1]) for v, n in zip(piece_value, count)]
-    return (sum([e[0] for e in balance]), sum([e[1] for e in balance]))
-
-def late_move_reduction(legal_moves_strings):
-    forcing_moves = collections.deque()
-    other_moves = []
-    for move in legal_moves_strings:
-        if '#' in move:
-            return [move]
-        if '+' in move or "=Q" in move:
-            forcing_moves.appendleft(move)
-        elif 'x' in move:
-            forcing_moves.append(move)
-        else:
-            other_moves.append(move)
-    return list(forcing_moves) + other_moves

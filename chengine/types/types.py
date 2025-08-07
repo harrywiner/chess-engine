@@ -1,8 +1,6 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Any, Callable, Dict, List, Optional
 from abc import ABC, abstractmethod
-
-Board = List[List[str]]
 
 class Eval(BaseModel):
     score: float
@@ -29,3 +27,42 @@ class Player(BaseModel, ABC):
     name: str
     @abstractmethod
     def move(self, state) -> tuple[str, Optional[Eval]]: ...
+
+# The OpenSpiel State, todo typing
+State = Any
+# A dictionary of piece type to location
+Positions = dict[str, list[tuple[int]]]
+# A Matrix of locations to piece occupation
+BoardMatrix = List[List[str]]
+
+class FeatureContext(BaseModel):
+    """
+    Thank you ChatGPT ... 
+    """
+    state: State
+    board_matrix: BoardMatrix
+    positions: Positions
+    extra: Dict[str, Any] = {}
+
+
+class Feature(BaseModel, ABC):
+    """
+    The base class for a hand-crafted-feature
+    A single component of:
+    Eval = W * F = ∑ wi * fi(B)
+    Where a single index of weight and function is defined by this class, and B is the board state
+
+    **func**
+    Parameters on func primarily are the board state, but include preprocessed values for speed
+    The input functions will be defined with *args, and can include any or all
+
+    The return will be a responsibility on the evaluation,
+    where positive is favourable for white, and negative for black
+    """
+    name: str # Display name of feature
+    weight: float
+    func: Callable[[FeatureContext], float]
+
+    def __call__(self, ctx: FeatureContext) -> float:
+        # ChatGPT
+        return self.weight * self.func(ctx)

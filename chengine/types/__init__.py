@@ -1,7 +1,8 @@
-from .types import Eval, Board, Player
+from .types import Eval, BoardMatrix, Player, Feature
 
 __all__ = [
     "Eval",
-    "Board",
-    "Player"
+    "BoardMatrix",
+    "Player",
+    "Feature"
 ]

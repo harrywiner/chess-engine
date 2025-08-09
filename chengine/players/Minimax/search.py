@@ -1,5 +1,5 @@
 from .evaluation import evaluate, late_move_reduction
-from ...types.Eval import Eval
+from ...types import Eval
 
 from typing import Tuple
 

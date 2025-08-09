@@ -1,30 +1,45 @@
 # Chess Engine version 1.7
 
-Framework for adjudicating a chess match with Computer Agents. 
-A pair programming effort with [Joyce Lee](github.com/joyce-leesw) 
+Framework for adjudicating a chess match with Computer Agents.
+A pair programming effort with [Joyce Lee](github.com/joyce-leesw)
 
 * Minimax implemented, capable of evaluating material exclusively
     * passes promotion test
-    
+
+## Setup
+
+Requirements for running this project:
+
+1. Python 3.12
+2. [uv package management](https://docs.astral.sh/uv/)
+3. CMake, for openspeil
+
+```bash
+brew install python@3.12
+curl -LsSf https://astral.sh/uv/install.sh | sh
+brew install cmake
+```
+
+Afterwards simply run
+
+```
+uv sync
+source .venv/bin/activate # Unix only
+```
 
 ## Use me
 
-in root directory run the following command to start a random game
+Starting a new game is simple. To play against Minimax run:
+
 ```
-python3 chengine/main.py
-```
-    
-to run tests
-```
-python3 chengine/main.py comptest
+python3 main.py
 ```
 
-Post module change
+To run the test suite, run:
 
-```bash
-    python3 -m chengine.main
-    python3 -m chengine.main.runtest
-    python3 -m chengine.tests.runtest
+```
+python3 main.py test
+python3 main.py test --filename=endgame_test.txt --depth=10
 ```
 
 ### Developers guide
@@ -33,19 +48,6 @@ Game is adjudicated in `chengine/main.py`
 
 Players (agents) are located in `chengine/players`.
 To add a new player, make a new folder within players
-
-## Environment
-
-To activate macOS/Linux, use the command: `source env_name/bin/activate`
-To activate Windows, use the command: `env_name\Scripts\activate`
-
-[Read this to create using VSCode](https://code.visualstudio.com/docs/python/environments)
-
-### Package Management
-
-**The following must be done inside the virtual environment**
-To update the requirements do the following command: `pip freeze > requirements.txt`
-To install from requirements do the following: `pip install -r requirements.txt`
 
 ## Changelog 
 
@@ -60,11 +62,22 @@ To install from requirements do the following: `pip install -r requirements.txt`
 1.7 - added king safety heuristics
 ## TO-DO
 
+### Engine
+
 Minimax
-* Satisfy Checkmate tests
 
-* Evaluate positional advantage
+#### Positional advantage
 
-Beyond
+[ ] Map for piece positioning, where each piece is best placed for each color, or for both colors
 
-* Neural Network Solution
+[ ] devalue king safety. Ensure my engine does not like the wayward queen attack
+
+### Interface
+
+[ ] implement openings book
+
+[ ] Implement translator for [UCI](https://en.wikipedia.org/wiki/Universal_Chess_Interface) to work with GUI 
+
+### Parallelisation
+
+[ ] learn to fish, what is required, releasing GIL or using parallelisable language

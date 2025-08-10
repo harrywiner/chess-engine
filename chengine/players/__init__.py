@@ -1,5 +1,5 @@
-from .human import Human
-from .minimax import Minimax
+from .Human import Human
+from .Minimax import Minimax
 
 __all__ = [
     "Human",

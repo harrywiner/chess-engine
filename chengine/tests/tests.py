@@ -3,7 +3,7 @@ import sys
 
 from ..players import Minimax
 from ..types import Player
-from ..players.minimax.evaluation import center_pawn_occupation, build_piece_matrix, build_position_map
+from ..players.Minimax.evaluation import center_pawn_occupation, build_piece_matrix, build_position_map
 
 from rich import print
 import time

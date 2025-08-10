@@ -10,6 +10,9 @@ def state_child_generator(state, legal_moves: list[str]):
     for m in legal_moves:
         yield state.child(m)
 
+def curried_search(state, depth):
+    return search(state, depth=depth)
+
 def get_ordered_actions(state):
     """
     Generates a list of moves in order of search priority
@@ -23,13 +26,12 @@ def get_ordered_actions(state):
 def get_best_move(state, depth=DEFAULT_DEPTH) -> Tuple[int, Eval]:
     
     ordered_actions = get_ordered_actions(state)
-    curried_search = lambda s: search(s, depth=depth-1)
     
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-        results = pool.map(curried_search, state_child_generator(state, ordered_actions))
+        results = pool.starmap(curried_search, [(s, depth - 1) for s in state_child_generator(state, ordered_actions)]) 
     
     eval = max(results) if state.current_player() else min(results)
-    return eval.moves[0], eval
+    return int(eval.moves[0]), eval
 
 def search(state, alpha=float("-inf"), beta=float("inf"), path=[], depth=DEFAULT_DEPTH) -> Eval:
     """

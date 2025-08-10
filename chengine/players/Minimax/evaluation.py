@@ -1,10 +1,7 @@
-from typing import List, Tuple
-
-from chengine.players.minimax.logic.helpers import build_piece_matrix
-from chengine.types import Feature, Positions
-from ...types import Eval, BoardMatrix
-import re
-import collections
+from chengine.players.minimax.logic.helpers import build_piece_matrix, build_position_map
+from chengine.types import Feature
+from .logic.features import calc_balance, center_pawn_occupation, minor_piece_development, can_castle, king_in_center, king_not_backrank
+from ...types import Eval
 
 
 evaluation_matrix: list[Feature] = [
@@ -63,74 +60,4 @@ def evaluate(state) -> Eval:
     return evaluation
 
 
-# Helpers
-
-def build_position_map(board: BoardMatrix) -> Positions:
-    """
-    A dict that stores lists of pieces. 
-    Each value is a list of coordinates corresponding to a single piece
-    Even unique pieces such as Kings are lists for consistency
-
-    The coordinates are (rank, file)
-    -> f6 == (2,5)
-    {
-        N: [(2,2), (5,2)],
-        K: [(4,0)]
-    }
-    """
-
-    piece_positions = collections.defaultdict(list)
-    for r in range(len(board)):
-        for f in range(len(board[r])):
-            if (board[r][f] != ''):
-                piece_positions[board[r][f]].append((r,f))
-    return piece_positions
-
-def center_pawn_occupation(board: BoardMatrix) -> Tuple[int,int]:
-    """
-    @param fen: the fen string for the position
-    @returns: Tuple[white center pawns, black center pawns]
-    """
-    center_ranks = board[3:5]
-    white_pawns, black_pawns = 0, 0
-
-    for rank in center_ranks:
-        for i in range(3, 5):
-            if rank[i] == 'p':
-                black_pawns += 1
-            if rank[i] == 'P':
-                white_pawns += 1
-    return white_pawns, black_pawns
-
-def minor_piece_development(positions: dict) -> Tuple[int, int]:
-    black_developed, white_developed = 0, 0
-
-    if "N" in positions.keys():
-        white_developed += sum([1 if p[0] != 0 else 0 for p in positions["N"]])
-    if "B" in positions.keys():
-        white_developed += sum([1 if p[0] != 0 else 0 for p in positions["N"]])
-    if "n" in positions.keys():
-        black_developed += sum([1 if p[0] != 7 else 0 for p in positions["n"]])
-    if "b" in positions.keys():
-        black_developed += sum([1 if p[0] != 7 else 0 for p in positions["b"]])
-
-    return white_developed, black_developed
-
-def can_castle(fen) -> Tuple[bool,bool]:
-    """
-    @returns Tuple[bool,bool] for if either side can castle in either direction
-    """
-
-    castle_string = fen.split(" ")[2]
-
-    return "K" in castle_string or "Q" in castle_string, "k" in castle_string or "q" in castle_string
-
-def king_in_center(positions) -> Tuple[bool,bool]:
-    return positions["K"][0][1] in [3,4,5], positions["k"][0][1] in [3,4,5]
-
-def king_not_backrank(positions) -> Tuple[bool,bool]:
-    return positions["K"][0][0] != 0, positions["k"][0][0] != 7
-
-def king_third_rank(positions) -> Tuple[bool,bool]:
-    return positions["K"][0][0] >= 2, positions["k"][0][0] <= 5
 

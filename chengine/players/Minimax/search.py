@@ -1,5 +1,6 @@
-from .evaluation import evaluate, late_move_reduction
+from .evaluation import evaluate
 from ...types import Eval
+from .logic.helpers import late_move_reduction
 
 from typing import Tuple
 

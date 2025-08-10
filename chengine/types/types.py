@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Literal, Optional
 from abc import ABC, abstractmethod
 
 class Eval(BaseModel):
@@ -28,18 +28,20 @@ class Player(BaseModel, ABC):
     @abstractmethod
     def move(self, state) -> tuple[str, Optional[Eval]]: ...
 
-# The OpenSpiel State, todo typing
-State = Any
 # A dictionary of piece type to location
 Positions = dict[str, list[tuple[int]]]
 # A Matrix of locations to piece occupation
 BoardMatrix = List[List[str]]
 
+WHITE = Literal[0]
+BLACK = Literal[1]
+
 class FeatureContext(BaseModel):
     """
     Thank you ChatGPT ... 
     """
-    state: State
+    to_move: WHITE | BLACK 
+    fen: str
     board_matrix: BoardMatrix
     positions: Positions
     extra: Dict[str, Any] = {}

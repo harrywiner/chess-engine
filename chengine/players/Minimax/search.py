@@ -2,13 +2,36 @@ from .evaluation import evaluate, late_move_reduction
 from ...types import Eval
 
 from typing import Tuple
+import multiprocessing
 
-def get_best_move(state, depth=5) -> Tuple[int, Eval]:
-    eval = search(state, float("-inf"), float("inf"), depth=depth)
-    move = int(eval.moves[0])
-    return move, eval
+DEFAULT_DEPTH = 5
 
-def search(state, alpha, beta, path=[], depth=5) -> Eval:
+def state_child_generator(state, legal_moves: list[str]):
+    for m in legal_moves:
+        yield state.child(m)
+
+def get_ordered_actions(state):
+    """
+    Generates a list of moves in order of search priority
+    """
+    legal_moves = state.legal_actions(state.current_player())
+
+    legal_moves_strings = [state.action_to_string(state.current_player(), move) for move in legal_moves]
+    ordered_legal_moves = late_move_reduction(legal_moves_strings)
+    return [state.string_to_action(move) for move in ordered_legal_moves]
+
+def get_best_move(state, depth=DEFAULT_DEPTH) -> Tuple[int, Eval]:
+    
+    ordered_actions = get_ordered_actions(state)
+    curried_search = lambda s: search(s, depth=depth-1)
+    
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+        results = pool.map(curried_search, state_child_generator(state, ordered_actions))
+    
+    eval = max(results) if state.current_player() else min(results)
+    return eval.moves[0], eval
+
+def search(state, alpha=float("-inf"), beta=float("inf"), path=[], depth=DEFAULT_DEPTH) -> Eval:
     """
     state: OpenSpiel state obj
     alpha: alpha value for alpha-beta pruning
@@ -22,11 +45,8 @@ def search(state, alpha, beta, path=[], depth=5) -> Eval:
         #state.returns gives the utility, 1 for white win, -1 for black win, 0 for draw
         return Eval(score=state.returns()[1] * 10000, nodes=1, moves=path) 
     
-    legal_moves = state.legal_actions(state.current_player())
-
-    legal_moves_strings = [state.action_to_string(state.current_player(), move) for move in legal_moves]
-    ordered_legal_moves = late_move_reduction(legal_moves_strings)
-    ordered_actions = [state.string_to_action(move) for move in ordered_legal_moves]
+    ordered_actions = get_ordered_actions(state)
+ 
     # 0 means black, 1 means white
     # find min evaluation for black and max evaluation for white
     nodes_checked = 0

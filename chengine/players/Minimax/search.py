@@ -3,10 +3,9 @@ from ...types import Eval
 
 from typing import Tuple
 import multiprocessing
-
 DEFAULT_DEPTH = 5
 
-def state_child_generator(state, legal_moves: list[str]):
+def state_child_generator(state, legal_moves: list[int]):
     for m in legal_moves:
         yield state.child(m)
 
@@ -26,7 +25,6 @@ def get_ordered_actions(state) -> list[int]:
 def get_best_move(state, depth=DEFAULT_DEPTH) -> Tuple[int, Eval]:
     
     ordered_actions = get_ordered_actions(state)
-    
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
         results = pool.starmap(curried_search, [(s, depth - 1) for s in state_child_generator(state, ordered_actions)]) 
     func = max if state.current_player() else min

@@ -68,8 +68,7 @@ evaluation_matrix = [
     )
 ]
 
-def calc_total_evaluation(evaluation_matrix: List[Feature]) -> float:
-    return sum(feature(ctx=FeatureContext) for feature in evaluation_matrix)
+
 
 def king_in_center(ctx: FeatureContext) -> float:
     white_center = int(ctx.positions["K"][0][1] in [3, 4, 5])

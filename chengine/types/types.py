@@ -17,6 +17,12 @@ class Eval(BaseModel):
     def __add__(self, other):
         # Eval + Eval
         return Eval(score=self.score + other.score, nodes=self.nodes + other.nodes, moves= self.moves + other.moves)
+    def __eq__(self, other):
+        return self.score == other.score
+    def __lt__(self, other):
+        return self.score < other.score
+    def __gt__(self, other):
+        return self.score > other.score
     def average(self):
         return self.score / self.nodes
 
@@ -29,7 +35,7 @@ class Player(BaseModel, ABC):
     def move(self, state) -> tuple[str, Optional[Eval]]: ...
 
 # A dictionary of piece type to location
-Positions = dict[str, list[tuple[int]]]
+Positions = dict[str, list[tuple[int, int]]]
 # A Matrix of locations to piece occupation
 BoardMatrix = List[List[str]]
 

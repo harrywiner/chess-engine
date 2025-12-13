@@ -2,8 +2,8 @@ from .test_utils import Test, TestSuite, read_csv, read_tests
 import sys
 
 from ..types import Player
-from ..players.minimax.logic.features import center_pawn_occupation
-from chengine.players.minimax.logic.helpers import build_piece_matrix, build_position_map
+from ..players.Minimax.logic.features import center_pawn_occupation
+from chengine.players.Minimax.logic.helpers import build_piece_matrix, build_position_map
 
 from rich import print
 import time

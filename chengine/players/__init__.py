@@ -1,5 +1,5 @@
-from .human.player import Human
-from .minimax.player import Minimax
+from .Human.player import Human
+from .Minimax.player import Minimax
 
 __all__ = [
     "Human",

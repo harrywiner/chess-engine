@@ -33,10 +33,9 @@ def get_ordered_actions(state) -> list[int]:
 def get_best_move(state, depth: int=DEFAULT_DEPTH) -> Tuple[int, Eval]:
     """The central evaluation function for Minimax
     Spawns processes to search different branches
-    
-    How can I propagate alpha-beta values through threads
-    Currently my late move reduction is useless, as all the first moves are evaluated at the same time. If I can search the best move first,
-    and save alpha-beta constants, then I can get the benefits of late move reduction
+
+    Implements Younger Brothers Wait https://www.chessprogramming.org/Young_Brothers_Wait_Concept
+    First evaluation is syncronous, further evaluations are parallelised
 
     Args:
         state (Openspeil State): Current state of the game

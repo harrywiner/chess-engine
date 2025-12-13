@@ -1,9 +1,9 @@
-from typing import List, Tuple
-from ...types import Eval, Board
+from typing import Tuple
+from ...types import Board
 import re
 import collections 
 
-def evaluate(state) -> Eval:
+def evaluate(state) -> int:
     evaluation = 0
     fen = str(state)
 

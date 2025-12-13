@@ -64,7 +64,7 @@ def get_best_move(state, depth: int=DEFAULT_DEPTH) -> Tuple[int, Eval]:
 
     return func(zip(ordered_actions, results), key=lambda x: x[1])
 
-def search(state, depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[]) -> Eval:
+def search(state, ply=0, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[], debug=False, early_return=True) -> Eval:
     """
     state: OpenSpiel state obj
     alpha: alpha value for alpha-beta pruning
@@ -72,11 +72,24 @@ def search(state, depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, p
     path: the path taken through the game tree (the list of moves made)
     depth: depth remaining in search
     """
-    if depth == 0:
+    current_eval = Eval(score=evaluate(state), nodes=1, moves=path)
+    if current_eval.score >= beta and early_return:
+        if debug:
+            print("Beta pruned")
+        return current_eval
+    elif current_eval.score <= alpha and early_return:
+        if debug:
+            print("Alpha pruned")
+        return current_eval
+    elif ply >= max_depth:
+        # Horizon problem, if there is one response move just after, then eval will be incorrect
+        # Could implement a `quiet` function to scan for tactical complications and continue evaluation
         return Eval(score=evaluate(state), nodes=1, moves=path)
     elif state.is_terminal(): #if checkmate or draw
         #state.returns gives the utility, 1 for white win, -1 for black win, 0 for draw
-        return Eval(score=state.returns()[1] * 10000, nodes=1, moves=path)
+        # if debug:
+            # print(f"Checkmate reached on {state.action_to_string(path[-1])}")
+        return Eval(score=state.returns()[1] * (10000 - ply), nodes=1, moves=path)
     
     ordered_actions = get_ordered_actions(state)
  
@@ -87,7 +100,7 @@ def search(state, depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, p
     if state.current_player() == 0: # black
         evaluation = float('inf')
         for m in ordered_actions:
-            result = search(state.child(m), alpha=alpha, beta=beta, path=path + [m], depth=depth-1) #Eval obj
+            result = search(state.child(m), alpha=alpha, beta=beta, path=path + [m], ply=ply+1) #Eval obj
 
             nodes_checked += result.nodes
 
@@ -98,13 +111,13 @@ def search(state, depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, p
             beta = min(beta, evaluation)
 
             if beta <= alpha:
-                break;
+                break
 
         return Eval(score=evaluation, nodes=nodes_checked, moves=path + best_move)
     else: # white
         evaluation = float('-inf')
         for m in ordered_actions:
-            result = search(state.child(m), alpha=alpha, beta=beta, path=path + [m], depth=depth-1) #Eval obj
+            result = search(state.child(m), alpha=alpha, beta=beta, path=path + [m], ply=ply+1) #Eval obj
 
             nodes_checked += result.nodes
 
@@ -115,7 +128,7 @@ def search(state, depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, p
             alpha = max(alpha, evaluation)
 
             if beta <= alpha:
-                break;
+                break
 
         return Eval(score=evaluation, nodes=nodes_checked, moves=path + best_move)
 

@@ -50,10 +50,7 @@ def get_best_move(state, depth: int=DEFAULT_DEPTH) -> Tuple[int, Eval]:
     # Young Brothers Wait
     # Get an initial alpha value for the rest of the brothers
     eldest_move = ordered_actions.pop(0)
-    start_time = time.time()
-    print(f"Evaluating eldest brother: {state.action_to_string(eldest_move)}")
     eldest_brother = search(state.child(eldest_move))
-    print(f"Finished eldest brother evaluation eval: {eldest_brother}, in time {time.time() - start_time}")
 
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
         results = pool.starmap(search, [(s, depth - 1, -abs(eldest_brother.score)) for s in state_child_generator(state, ordered_actions)]) 
@@ -64,7 +61,7 @@ def get_best_move(state, depth: int=DEFAULT_DEPTH) -> Tuple[int, Eval]:
 
     return func(zip(ordered_actions, results), key=lambda x: x[1])
 
-def search(state, ply=0, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[], debug=False) -> Eval:
+def search(state, ply=0, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[]) -> Eval:
     """
     state: OpenSpiel state obj
     alpha: alpha value for alpha-beta pruning
@@ -74,12 +71,8 @@ def search(state, ply=0, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA
     """
     current_eval = Eval(score=evaluate(state), nodes=1, moves=path)
     if current_eval.score >= beta:
-        if debug:
-            print("Beta pruned")
         return current_eval
     elif current_eval.score <= alpha:
-        if debug:
-            print("Alpha pruned")
         return current_eval
     elif ply >= max_depth:
         # Horizon problem, if there is one response move just after, then eval will be incorrect
@@ -87,8 +80,6 @@ def search(state, ply=0, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA
         return Eval(score=evaluate(state), nodes=1, moves=path)
     elif state.is_terminal(): #if checkmate or draw
         #state.returns gives the utility, 1 for white win, -1 for black win, 0 for draw
-        if debug:
-            print("Checkmate reached")
         return Eval(score=state.returns()[1] * (MATE_EVAL - ply), nodes=1, moves=path)
     
     ordered_actions = get_ordered_actions(state)

@@ -81,7 +81,3 @@ Minimax
 ### Parallelisation
 
 [ ] learn to fish, what is required, releasing GIL or using parallelisable language
-
-### Mate
-
-Mate should be valued at `+/-MATE -/+ ply`. Shorter mates should be prioritised. Will make test

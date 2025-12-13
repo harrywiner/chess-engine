@@ -6,6 +6,7 @@ from typing import Iterator, Tuple
 import multiprocessing
 DEFAULT_DEPTH = 5
 BETA_INITIAL = 100_000
+MATE_EVAL = 10000
 
 def state_child_generator(state, legal_moves: list[int]) -> Iterator[int]:
     """A generator for openspiel states
@@ -63,7 +64,7 @@ def get_best_move(state, depth: int=DEFAULT_DEPTH) -> Tuple[int, Eval]:
 
     return func(zip(ordered_actions, results), key=lambda x: x[1])
 
-def search(state, ply=0, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[], debug=False, early_return=True) -> Eval:
+def search(state, ply=0, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[], debug=False) -> Eval:
     """
     state: OpenSpiel state obj
     alpha: alpha value for alpha-beta pruning
@@ -72,11 +73,11 @@ def search(state, ply=0, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA
     depth: depth remaining in search
     """
     current_eval = Eval(score=evaluate(state), nodes=1, moves=path)
-    if current_eval.score >= beta and early_return:
+    if current_eval.score >= beta:
         if debug:
             print("Beta pruned")
         return current_eval
-    elif current_eval.score <= alpha and early_return:
+    elif current_eval.score <= alpha:
         if debug:
             print("Alpha pruned")
         return current_eval
@@ -86,9 +87,9 @@ def search(state, ply=0, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA
         return Eval(score=evaluate(state), nodes=1, moves=path)
     elif state.is_terminal(): #if checkmate or draw
         #state.returns gives the utility, 1 for white win, -1 for black win, 0 for draw
-        # if debug:
-            # print(f"Checkmate reached on {state.action_to_string(path[-1])}")
-        return Eval(score=state.returns()[1] * (10000 - ply), nodes=1, moves=path)
+        if debug:
+            print("Checkmate reached")
+        return Eval(score=state.returns()[1] * (MATE_EVAL - ply), nodes=1, moves=path)
     
     ordered_actions = get_ordered_actions(state)
  

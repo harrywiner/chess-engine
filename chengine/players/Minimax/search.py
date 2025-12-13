@@ -1,3 +1,4 @@
+import time
 from .evaluation import evaluate, late_move_reduction
 from ...types import Eval
 
@@ -18,10 +19,6 @@ def state_child_generator(state, legal_moves: list[int]) -> Iterator[int]:
     """
     for m in legal_moves:
         yield state.child(m)
-
-def curried_search(state, depth):
-    # search function requires positional arguments, converting positional to kwarg
-    return search(state, depth=depth)
 
 def get_ordered_actions(state) -> list[int]:
     """
@@ -49,12 +46,25 @@ def get_best_move(state, depth: int=DEFAULT_DEPTH) -> Tuple[int, Eval]:
         Tuple[int, Eval]: returns the action in integer form and the Eval
     """
     ordered_actions = get_ordered_actions(state)
+
+    # Young Brothers Wait
+    # Get an initial alpha value for the rest of the brothers
+    eldest_move = ordered_actions.pop(0)
+    start_time = time.time()
+    print(f"Evaluating eldest brother: {state.action_to_string(eldest_move)}")
+    eldest_brother = search(state.child(eldest_move))
+    print(f"Finished eldest brother evaluation eval: {eldest_brother}, in time {time.time() - start_time}")
+
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-        results = pool.starmap(curried_search, [(s, depth - 1) for s in state_child_generator(state, ordered_actions)]) 
+        results = pool.starmap(search, [(s, depth - 1, -abs(eldest_brother.score)) for s in state_child_generator(state, ordered_actions)]) 
     func = max if state.current_player() else min
+    # Re-add eldest brother
+    ordered_actions.append(eldest_move)
+    results.append(eldest_brother)
+
     return func(zip(ordered_actions, results), key=lambda x: x[1])
 
-def search(state, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[], depth=DEFAULT_DEPTH) -> Eval:
+def search(state, depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[]) -> Eval:
     """
     state: OpenSpiel state obj
     alpha: alpha value for alpha-beta pruning
@@ -77,7 +87,7 @@ def search(state, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[], depth=DEFAULT
     if state.current_player() == 0: # black
         evaluation = float('inf')
         for m in ordered_actions:
-            result = search(state.child(m), alpha, beta, path + [m], depth=depth-1) #Eval obj
+            result = search(state.child(m), alpha=alpha, beta=beta, path=path + [m], depth=depth-1) #Eval obj
 
             nodes_checked += result.nodes
 
@@ -94,7 +104,7 @@ def search(state, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[], depth=DEFAULT
     else: # white
         evaluation = float('-inf')
         for m in ordered_actions:
-            result = search(state.child(m), alpha, beta, path + [m], depth=depth-1) #Eval obj
+            result = search(state.child(m), alpha=alpha, beta=beta, path=path + [m], depth=depth-1) #Eval obj
 
             nodes_checked += result.nodes
 

@@ -71,7 +71,7 @@ def search(state, ply=0, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA
     """
     if state.is_terminal(): #if checkmate or draw
         #state.returns gives the utility, 0 for white win, -1 for black win, 0 for draw
-        return Eval(score=state.returns()[0] * (MATE_EVAL - ply), nodes=1, moves=path)
+        return Eval(score=state.returns()[1] * (MATE_EVAL - ply), nodes=1, moves=path)
     
     current_eval = Eval(score=evaluate(state), nodes=1, moves=path)
 

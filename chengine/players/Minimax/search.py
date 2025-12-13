@@ -8,7 +8,7 @@ DEFAULT_DEPTH = 5
 BETA_INITIAL = 100_000
 MATE_EVAL = 10000
 
-def state_child_generator(state, legal_moves: list[int]) -> Iterator[int]:
+def child_process_generator(state, legal_moves: list[int], depth: int, alpha: float) -> Iterator[int]:
     """A generator for openspiel states
 
     Args:
@@ -19,7 +19,7 @@ def state_child_generator(state, legal_moves: list[int]) -> Iterator[int]:
         Generator[int]: _description_
     """
     for m in legal_moves:
-        yield state.child(m)
+        yield (state.child(m), depth, alpha)
 
 def get_ordered_actions(state) -> list[int]:
     """
@@ -53,7 +53,7 @@ def get_best_move(state, depth: int=DEFAULT_DEPTH) -> Tuple[int, Eval]:
     eldest_brother = search(state.child(eldest_move))
 
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-        results = pool.starmap(search, [(s, depth - 1, -abs(eldest_brother.score)) for s in state_child_generator(state, ordered_actions)]) 
+        results = pool.starmap(search, child_process_generator(state, ordered_actions, depth - 1, -abs(eldest_brother.score)))
     func = max if state.current_player() else min
     # Re-add eldest brother
     ordered_actions.append(eldest_move)
@@ -61,7 +61,7 @@ def get_best_move(state, depth: int=DEFAULT_DEPTH) -> Tuple[int, Eval]:
 
     return func(zip(ordered_actions, results), key=lambda x: x[1])
 
-def search(state, ply=0, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[]) -> Eval:
+def search(state, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[], ply=0) -> Eval:
     """
     state: OpenSpiel state obj
     alpha: alpha value for alpha-beta pruning

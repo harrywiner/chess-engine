@@ -1,15 +1,26 @@
 from .evaluation import evaluate, late_move_reduction
 from ...types import Eval
 
-from typing import Tuple
+from typing import Iterator, Tuple
 import multiprocessing
 DEFAULT_DEPTH = 5
+BETA_INITIAL = 100_000
 
-def state_child_generator(state, legal_moves: list[int]):
+def state_child_generator(state, legal_moves: list[int]) -> Iterator[int]:
+    """A generator for openspiel states
+
+    Args:
+        state (Openspiel State): Current state of the game
+        legal_moves (list[int]): Set of legal moves, in processing order
+
+    Yields:
+        Generator[int]: _description_
+    """
     for m in legal_moves:
         yield state.child(m)
 
 def curried_search(state, depth):
+    # search function requires positional arguments, converting positional to kwarg
     return search(state, depth=depth)
 
 def get_ordered_actions(state) -> list[int]:
@@ -22,15 +33,28 @@ def get_ordered_actions(state) -> list[int]:
     ordered_legal_moves = late_move_reduction(legal_moves_strings)
     return [state.string_to_action(move) for move in ordered_legal_moves]
 
-def get_best_move(state, depth=DEFAULT_DEPTH) -> Tuple[int, Eval]:
+def get_best_move(state, depth: int=DEFAULT_DEPTH) -> Tuple[int, Eval]:
+    """The central evaluation function for Minimax
+    Spawns processes to search different branches
     
+    How can I propagate alpha-beta values through threads
+    Currently my late move reduction is useless, as all the first moves are evaluated at the same time. If I can search the best move first,
+    and save alpha-beta constants, then I can get the benefits of late move reduction
+
+    Args:
+        state (Openspeil State): Current state of the game
+        depth (int, optional): The depth to search, initialises each process as depth - 1. Defaults to 5.
+
+    Returns:
+        Tuple[int, Eval]: returns the action in integer form and the Eval
+    """
     ordered_actions = get_ordered_actions(state)
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
         results = pool.starmap(curried_search, [(s, depth - 1) for s in state_child_generator(state, ordered_actions)]) 
     func = max if state.current_player() else min
     return func(zip(ordered_actions, results), key=lambda x: x[1])
 
-def search(state, alpha=float("-inf"), beta=float("inf"), path=[], depth=DEFAULT_DEPTH) -> Eval:
+def search(state, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[], depth=DEFAULT_DEPTH) -> Eval:
     """
     state: OpenSpiel state obj
     alpha: alpha value for alpha-beta pruning
@@ -42,7 +66,7 @@ def search(state, alpha=float("-inf"), beta=float("inf"), path=[], depth=DEFAULT
         return Eval(score=evaluate(state), nodes=1, moves=path)
     elif state.is_terminal(): #if checkmate or draw
         #state.returns gives the utility, 1 for white win, -1 for black win, 0 for draw
-        return Eval(score=state.returns()[1] * 10000, nodes=1, moves=path) 
+        return Eval(score=state.returns()[1] * 10000, nodes=1, moves=path)
     
     ordered_actions = get_ordered_actions(state)
  

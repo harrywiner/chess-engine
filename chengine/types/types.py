@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import Enum
 from pydantic import BaseModel, Field
 from typing import Any, Callable, Dict, List, Literal, Optional
@@ -7,22 +8,21 @@ class Color(Enum):
     BLACK = 1
     WHITE = 0
 
-class PieceTypes(Enum):
-    WHITE_PAWN = "p"
-    WHITE_KNIGHT = "n"
-    WHITE_BISHOP = "b"
-    WHITE_ROOK = "r"
-    WHITE_QUEEN = "q"
-    BLACK_PAWN = "P"
-    BLACK_KNIGHT = "N"
-    BLACK_BISHOP = "B"
-    BLACK_ROOK = "R"
-    BLACK_QUEEN = "Q"
+class PieceKind(Enum):
+    PAWN   = "P"
+    KNIGHT = "N"
+    BISHOP = "B"
+    ROOK   = "R"
+    QUEEN  = "Q"
 
-
-class Piece(BaseModel):
-    symbol: PieceTypes
+@dataclass(frozen=True, slots=True)
+class Piece:
+    kind: PieceKind
     color: Color
+
+    @property
+    def symbol(self) -> str:
+        return self.kind.value if self.color == Color.WHITE else self.kind.value.lower()
 
 class Eval(BaseModel):
     score: float # centipawns, with potential float in scaling

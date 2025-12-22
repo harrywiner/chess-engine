@@ -3,9 +3,12 @@ The set of evaluated metrics. Usually analysed as WHITE - BLACK
 Follows conventions outlined in docs/features.md
 All measured in integer centipawns
 """
-from typing import List
+
+from chengine.players.Minimax.logic.pawn_structure.features import center_pawn_occupation, isolated_pawns, pawn_chains
 from .helpers import can_castle, king_in_center, king_not_on_back_two_ranks, material_count
 from chengine.types import Feature, FeatureContext
+from .matrices import PIECE_QUALITY_MAP, PIECE_QUALITY_SCALE
+
 
 def calc_balance(ctx: FeatureContext) -> int:
     """
@@ -15,23 +18,6 @@ def calc_balance(ctx: FeatureContext) -> int:
     count = material_count(ctx.fen)
     balance = [(v * n[0], v * n[1]) for v, n in zip(piece_value, count)]
     return sum([e[0] for e in balance]) - sum([e[1] for e in balance])
-
-def center_pawn_occupation(ctx: FeatureContext) -> int:
-    """
-    @param fen: the fen string for the position
-    @returns: Tuple[white center pawns, black center pawns]
-    Each pawn in the centre is worth 1/2 pawn
-    """
-    center_ranks = ctx.board_matrix[3:5]
-    white_pawns, black_pawns = 0, 0
-
-    for rank in center_ranks:
-        for i in range(3, 5):
-            if rank[i] == 'p':
-                black_pawns += 1
-            if rank[i] == 'P':
-                white_pawns += 1
-    return (white_pawns - black_pawns) * 50
 
 def minor_piece_development(ctx: FeatureContext) -> int:
     """
@@ -58,20 +44,39 @@ def king_in_center_and_no_castle(ctx: FeatureContext) -> int:
 def king_not_on_back_rank(ctx: FeatureContext) -> int:
     return king_not_on_back_two_ranks(ctx) * 200 * ctx.game_phase
 
-def piece_quality(ctx: FeatureContext) -> float:
-    pass
+def evaluate_piece_squares(
+    ctx: FeatureContext,
+) -> float:
+    """
+    Chat GPT
+    Returns total positional score (0-1 scaled) for all pieces
+    positive = White, negative = Black
+    Target weight: 200 centipawns max advantage
+    Max total_score = 21
+    """
+    total_score = 0.0
 
+    for piece, coords in ctx.positions.items():
+        if piece.lower() == "p":
+            continue
+        table = PIECE_QUALITY_MAP.get(piece.lower())
+        if table is None:
+            continue  # piece has no table defined
 
-evaluation_matrix = [
+        is_white = piece.isupper()
+
+        for r, c in coords:
+            # Flip table vertically for black
+            table_r = r if is_white else 7 - r
+            total_score += table[table_r][c] if is_white else -table[table_r][c] * PIECE_QUALITY_SCALE[piece.lower()]
+
+    return total_score * 10
+
+evaluation_matrix = (
     Feature(
         name="material_balance",
         weight=1,
         func=calc_balance
-    ),
-    Feature(
-        name="occupation",
-        weight=1,
-        func=center_pawn_occupation 
     ),
     Feature(
         name="minor_piece_development",
@@ -92,5 +97,20 @@ evaluation_matrix = [
         name="to_move",
         weight=1,
         func=player_to_move
+    ),
+    Feature(
+        name="piece_quality",
+        weight=1,
+        func=evaluate_piece_squares
+    ),
+    Feature(
+        name="isolated_pawns",
+        weight=1,
+        func=isolated_pawns
+    ),
+    Feature(
+        name="pawn_chains",
+        weight=1,
+        func=pawn_chains
     )
-]
+)

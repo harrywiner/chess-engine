@@ -48,7 +48,7 @@ def game_loop(game, state, player1: Player, player2: Player):
     """
     players = [player1, player2]
     random.shuffle(players)
-    print(f"Coin flip has decided [bold green]{players[0].name} [white]goes first")
+    print(f"Coin flip has decided [bold green]{players[1].name} [white]goes first")
 
     while not state.is_terminal():
         player_to_move = players[int(state.current_player())]
@@ -62,4 +62,4 @@ def game_loop(game, state, player1: Player, player2: Player):
 
     returns = state.returns()
     for pid in range(game.num_players()):
-        print("Utility for player {} is {}".format(pid, returns[pid]))        
+        print("Utility for player {} is {}".format(pid, returns[pid]))

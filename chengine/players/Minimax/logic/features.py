@@ -59,8 +59,6 @@ def evaluate_piece_squares(
     total_score = 0.0
 
     for piece, coords in ctx.positions.items():
-        if piece.lower() == "p":
-            continue
         table = PIECE_QUALITY_MAP.get(piece.lower())
         if table is None:
             continue  # piece has no table defined
@@ -70,7 +68,8 @@ def evaluate_piece_squares(
         for r, c in coords:
             # Flip table vertically for black
             table_r = r if is_white else 7 - r
-            total_score += table[table_r][c] if is_white else -table[table_r][c] * PIECE_QUALITY_SCALE[piece.lower()]
+            quality = (table[table_r][c] if is_white else -table[table_r][c]) * PIECE_QUALITY_SCALE[piece.lower()]
+            total_score += quality
 
     return total_score * 10
 features = [

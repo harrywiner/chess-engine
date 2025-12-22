@@ -4,7 +4,9 @@ Follows conventions outlined in docs/features.md
 All measured in integer centipawns
 """
 
+from typing import Tuple
 from chengine.players.Minimax.logic.pawn_structure.features import center_pawn_occupation, isolated_pawns, pawn_chains
+from .pawn_structure import FEATURES as PAWN_STRUCTURE_FEATURES
 from .helpers import can_castle, king_in_center, king_not_on_back_two_ranks, material_count
 from chengine.types import Feature, FeatureContext
 from .matrices import PIECE_QUALITY_MAP, PIECE_QUALITY_SCALE
@@ -71,8 +73,16 @@ def evaluate_piece_squares(
             total_score += table[table_r][c] if is_white else -table[table_r][c] * PIECE_QUALITY_SCALE[piece.lower()]
 
     return total_score * 10
+features = [
+    Feature(
+        name=func.__name__,
+        weight=1,
+        func=func,
+    )
+    for func in PAWN_STRUCTURE_FEATURES
+]
 
-evaluation_matrix = (
+other_features = (
     Feature(
         name="material_balance",
         weight=1,
@@ -102,15 +112,7 @@ evaluation_matrix = (
         name="piece_quality",
         weight=1,
         func=evaluate_piece_squares
-    ),
-    Feature(
-        name="isolated_pawns",
-        weight=1,
-        func=isolated_pawns
-    ),
-    Feature(
-        name="pawn_chains",
-        weight=1,
-        func=pawn_chains
     )
 )
+features.extend(other_features)
+evaluation_matrix: Tuple[Feature] = tuple(features)

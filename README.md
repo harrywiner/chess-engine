@@ -62,7 +62,7 @@ To add a new player, make a new folder within players
 1.7 - added king safety heuristics
 ## TO-DO
 
-### Engine
+### Engine
 
 Minimax
 

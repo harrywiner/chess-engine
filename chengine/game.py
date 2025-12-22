@@ -52,6 +52,7 @@ def game_loop(game, state, player1: Player, player2: Player):
 
     while not state.is_terminal():
         player_to_move = players[int(state.current_player())]
+        print("Player to move: " + str(player_to_move))
         action, e = player_to_move.move(state)
         print(f"Move! Player {player_to_move.name} plays {state.action_to_string(state.current_player(), action)}")
         if e:

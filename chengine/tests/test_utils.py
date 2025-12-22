@@ -48,7 +48,7 @@ def read_tests(filename: Optional[str] = None, base_filepath=BASE_TEST_DIR) -> T
     @returns a dictionary of file name to tests
     """
 
-    # Chat GPT
+    # Chat GPT
     tests = {}
     files = os.listdir(base_filepath) if not filename else [filename]
 

@@ -89,7 +89,7 @@ def search(state, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIA
     # find min evaluation for black and max evaluation for white
     nodes_checked = 0
     best_move = None
-    if state.current_player() == 0: # black
+    if state.current_player() == 0: # black
         evaluation = float('inf')
         for m in ordered_actions:
             result = search(state.child(m), alpha=alpha, beta=beta, path=path + [m], ply=ply+1) #Eval obj
@@ -123,5 +123,3 @@ def search(state, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIA
                 break
 
         return Eval(score=evaluation, nodes=nodes_checked, moves=path + best_move)
-
-

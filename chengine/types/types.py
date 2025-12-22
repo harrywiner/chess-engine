@@ -1,9 +1,31 @@
-from pydantic import BaseModel
+from enum import Enum
+from pydantic import BaseModel, Field
 from typing import Any, Callable, Dict, List, Literal, Optional
 from abc import ABC, abstractmethod
 
+class Color(Enum):
+    BLACK = 1
+    WHITE = 0
+
+class PieceTypes(Enum):
+    WHITE_PAWN = "p"
+    WHITE_KNIGHT = "n"
+    WHITE_BISHOP = "b"
+    WHITE_ROOK = "r"
+    WHITE_QUEEN = "q"
+    BLACK_PAWN = "P"
+    BLACK_KNIGHT = "N"
+    BLACK_BISHOP = "B"
+    BLACK_ROOK = "R"
+    BLACK_QUEEN = "Q"
+
+
+class Piece(BaseModel):
+    symbol: PieceTypes
+    color: Color
+
 class Eval(BaseModel):
-    score: float
+    score: float # centipawns, with potential float in scaling
     nodes: int
     moves: List[int]
     
@@ -39,19 +61,19 @@ Positions = dict[str, list[tuple[int, int]]]
 # A Matrix of locations to piece occupation
 BoardMatrix = List[List[str]]
 
-WHITE = Literal[0]
-BLACK = Literal[1]
-
 class FeatureContext(BaseModel):
     """
     Thank you ChatGPT ... 
     """
-    to_move: WHITE | BLACK 
+    to_move: Color
     fen: str
     board_matrix: BoardMatrix
     positions: Positions
-    extra: Dict[str, Any] = {}
-
+    game_phase: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="Game phase: 1.0 = opening, 0.0 = endgame"
+    )
 
 class Feature(BaseModel, ABC):
     """

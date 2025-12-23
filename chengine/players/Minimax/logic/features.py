@@ -91,17 +91,17 @@ other_features = (
     ),
     Feature(
         name="minor_piece_development",
-        weight=1,
+        weight=.6,
         func=minor_piece_development
     ),
     Feature(
         name="king_in_center_and_no_castle",
-        weight=1,
+        weight=.8,
         func=king_in_center_and_no_castle
     ),
     Feature(
         name="king_not_on_back_rank",
-        weight=1,
+        weight=.8,
         func=king_not_on_back_rank
     ),
     Feature(
@@ -111,7 +111,7 @@ other_features = (
     ),
     Feature(
         name="piece_quality",
-        weight=1,
+        weight=.8,
         func=evaluate_piece_squares
     )
 )

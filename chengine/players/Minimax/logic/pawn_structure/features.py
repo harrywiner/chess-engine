@@ -124,3 +124,9 @@ def passed_pawns(ctx: FeatureContext) -> int:
     black_score = score_for_side("p", white_pawns, direction=1)
 
     return white_score - black_score
+
+def never_play_f6(ctx: FeatureContext) -> float:
+    black_f6 = int(ctx.board_matrix[5][5] == 'p')
+    white_f3 = int(ctx.board_matrix[5][2] == 'P')
+
+    return (white_f3 - black_f6) * 30 * ctx.game_phase**2

@@ -50,10 +50,10 @@ def get_best_move(state, depth: int=DEFAULT_DEPTH) -> Tuple[int, Eval]:
     # Young Brothers Wait
     # Get an initial alpha value for the rest of the brothers
     eldest_move = ordered_actions.pop(0)
-    eldest_brother = search(state.child(eldest_move))
+    eldest_brother = search(state.child(eldest_move), max_depth=depth)
 
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-        results = pool.starmap(search, child_process_generator(state, ordered_actions, depth - 1, -abs(eldest_brother.score)))
+        results = pool.starmap(search, child_process_generator(state, ordered_actions, depth, -abs(eldest_brother.score)))
     func = max if state.current_player() else min
     # Re-add eldest brother
     ordered_actions.append(eldest_move)
@@ -95,7 +95,7 @@ def search(state, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIA
         evaluation = float('inf')
         for a in ordered_actions:
             m = state.action_to_string(state.current_player(),a)
-            result = search(state.child(a), alpha=alpha, beta=beta, path=path + [m], ply=ply+1) #Eval obj
+            result = search(state.child(a), alpha=alpha, beta=beta, path=path + [m], ply=ply+1, max_depth=max_depth) #Eval obj
 
             nodes_checked += result.nodes
 
@@ -113,7 +113,7 @@ def search(state, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIA
         evaluation = float('-inf')
         for a in ordered_actions:
             m = state.action_to_string(state.current_player(),a)
-            result = search(state.child(a), alpha=alpha, beta=beta, path=path + [m], ply=ply+1) #Eval obj
+            result = search(state.child(a), alpha=alpha, beta=beta, path=path + [m], ply=ply+1, max_depth=max_depth) #Eval obj
 
             nodes_checked += result.nodes
 

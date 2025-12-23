@@ -1,1 +1,2 @@
 Endgame Recapture,7k/pp4p1/7p/8/8/2n4P/PP4P1/7K w - - 0 1,bxc3
+Scotch Capture Chain,r1bqk2r/pppp1ppp/2n2n2/2b5/3NP3/4B3/PPP2PPP/RN1QKB1R w KQkq - 3 6,Nxc6|bxc6|Bxc5

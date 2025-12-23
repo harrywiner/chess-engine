@@ -54,3 +54,8 @@ def test_e4_positive_eval(ctx=None):
 def test_king_safety_no_center_eval(ctx=None):
     val = king_in_center_and_no_castle(ctx)
     assert val == 0
+
+@new_initial_state(fen="r1bqk2r/p1p2ppp/2p2n2/3pP3/8/2N1B3/PP3PPP/R2QKB1R w KQkq d6 0 10")
+def test_capture_test_failure(ctx=None):
+    val = evaluate_context(ctx)
+    assert not val

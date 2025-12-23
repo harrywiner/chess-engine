@@ -16,7 +16,7 @@ def calc_balance(ctx: FeatureContext) -> int:
     """
     Count of material, positive to white, negative to black
     """
-    piece_value = [900, 500, 330, 320, 100]
+    piece_value = [900, 500, 320, 330, 100]
     count = material_count(ctx.fen)
     balance = [(v * n[0], v * n[1]) for v, n in zip(piece_value, count)]
     return sum([e[0] for e in balance]) - sum([e[1] for e in balance])

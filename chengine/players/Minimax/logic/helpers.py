@@ -58,7 +58,7 @@ def late_move_reduction(legal_moves_strings):
 
 def material_count(fen) -> Tuple[int, int]:
     trunc = re.match("([\da-zA-Z]+\/){7}[\da-zA-Z]+", fen).group(0)
-    codes = ["k", "q", "r", "n", "b", "p"]
+    codes = ["q", "r", "n", "b", "p"]
     
     return [(len(re.findall(c.upper(), trunc)), len(re.findall(c, trunc))) for c in codes]
 

@@ -1,7 +1,7 @@
 .PHONY: test
 
 test:
-	python3 main.py test --depth=5
+	python3 main.py --entrypoint=test
 
 play:
-	python3 main.py --depth=4
+	python3 main.py $(if $(DEPTH),--depth=$(DEPTH))

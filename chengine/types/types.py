@@ -27,7 +27,7 @@ class Piece:
 class Eval(BaseModel):
     score: float # centipawns, with potential float in scaling
     nodes: int
-    moves: List[int]
+    moves: List[str]
     
     def __iadd__(self, other):
         # Eval += Eval

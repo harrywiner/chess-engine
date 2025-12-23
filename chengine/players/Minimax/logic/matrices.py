@@ -3,6 +3,17 @@ The relative quality of each piece on each square.
 
 """
 
+PAWN_QUALITY = [
+    [0,0,0,0,0,0,0,0],
+    [1,1,1,1,1,1,1,1],
+    [0.3,0.3,0.2,0.8,0.8,0.5,0.3,0.3],
+    [0.5,0.3,0.4,0.7,0.7,0.4,0.3,0.5],
+    [0.3,0.3,0.4,0.7,0.7,0.4,0.3,0.5],
+    [0.3,0.3,0.2,0.6,0.6,0.5,0.3,0.3],
+    [0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2],
+    [0,0,0,0,0,0,0,0]
+]
+
 KNIGHT_QUALITY = [
     [0,0.1,0.3,0.4,0.4,0.3,0.1,0],
     [0.1,0,0.6,0.8,0.8,0.6,0,0.1],
@@ -59,6 +70,7 @@ KING_QUALTIY = [
 ]
 
 PIECE_QUALITY_MAP = {
+    "p": PAWN_QUALITY,
     "n": KNIGHT_QUALITY,
     "b": BISHOP_QUALITY,
     "r": ROOK_QUALITY,
@@ -67,6 +79,7 @@ PIECE_QUALITY_MAP = {
 }
 
 PIECE_QUALITY_SCALE = {
+    "p": .5,
     "n": 1,
     "b": 1.1,
     "r": 2,

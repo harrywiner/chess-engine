@@ -2,6 +2,7 @@ import random
 from absl import flags
 from rich import print
 
+from chengine.helpers import moves_to_pgn, utility_to_result, write_pgn_to_file
 from chengine.types import Player
 
 import sys
@@ -50,16 +51,33 @@ def game_loop(game, state, player1: Player, player2: Player):
     random.shuffle(players)
     print(f"Coin flip has decided [bold green]{players[1].name} [white]goes first")
 
+    moves_taken = [] # for output pgn
+
     while not state.is_terminal():
         player_to_move = players[int(state.current_player())]
-        print("Player to move: " + str(player_to_move))
+        print("Player to move: " + player_to_move.name)
         action, e = player_to_move.move(state)
-        print(f"Move! Player {player_to_move.name} plays {state.action_to_string(state.current_player(), action)}")
+        string_move = state.action_to_string(state.current_player(), action) 
+        print(f"Move! Player {player_to_move.name} plays {string_move}")
         if e:
-            print(f"Player {player_to_move.name} evaluates the position as: {e.score}")
+            print(f"Player {player_to_move.name} evaluates the position as: {e}")
+        
+        # PGN Move formatting
         state.apply_action(action)
+        moves_taken.append(string_move)
         print(f"Current State is: {str(state)}")
 
     returns = state.returns()
     for pid in range(game.num_players()):
         print("Utility for player {} is {}".format(pid, returns[pid]))
+    pgn = moves_to_pgn(
+        moves=moves_taken,
+        white=players[1].name,
+        black=players[0].name,
+        result = f"{utility_to_result(returns[1])}-{utility_to_result(returns[1])}",
+        event="Man vs Machine", site="Python"
+    )
+    print(pgn)
+    pgn_filename = f"{players[1].name}({utility_to_result(returns[1])})-{players[0].name}({utility_to_result(returns[0])})"
+    write_pgn_to_file(pgn, pgn_filename)
+    

@@ -1,0 +1,10 @@
+[Event "Man vs Machine"]
+[Site "Python"]
+[Date "2025.12.23"]
+[Round "1"]
+[White "Minimax"]
+[Black "Human"]
+[Result "0-1"]
+
+1. Nf3 d5 2. Nc3 Nf6 3. h3 Nc6 4. d4 Bf5 5. Bg5 e6 6. b3 Bb4 7. Qd2 h6 8. Bh4 g5 9. Bxg5 hxg5 10. e4 Nxe4 11. Nxe4 Bxd2+ 12. Nexd2 Qe7 13. Bb5 O-O-O 14. Bxc6 bxc6 15. c4 f6 16. O-O g4 17. hxg4 Qh7 18. Nh4 Qxh4 19. f3 Bxg4 20. fxg4 Qh2+ 21. Kf2 Qf4+ 22. Nf3 e5 23. Kg1 Qg3 24. cxd5 Rh7 25. dxe5 Rdh8 26. Nh4 Rxh4 27. exf6 Rh1#
+0-1

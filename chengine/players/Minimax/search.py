@@ -91,13 +91,14 @@ def search(state, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIA
     best_move = None
     if state.current_player() == 0: # black
         evaluation = float('inf')
-        for m in ordered_actions:
-            result = search(state.child(m), alpha=alpha, beta=beta, path=path + [m], ply=ply+1) #Eval obj
+        for a in ordered_actions:
+            m = state.action_to_string(a)
+            result = search(state.child(a), alpha=alpha, beta=beta, path=[m] + path, ply=ply+1) #Eval obj
 
             nodes_checked += result.nodes
 
             if result.score < evaluation:
-                best_move = [m]
+                best_path = result.moves
                 evaluation = result.score
             
             beta = min(beta, evaluation)
@@ -105,16 +106,17 @@ def search(state, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIA
             if beta <= alpha:
                 break
 
-        return Eval(score=evaluation, nodes=nodes_checked, moves=path + best_move)
+        return Eval(score=evaluation, nodes=nodes_checked, moves=best_path)
     else: # white
         evaluation = float('-inf')
-        for m in ordered_actions:
-            result = search(state.child(m), alpha=alpha, beta=beta, path=path + [m], ply=ply+1) #Eval obj
+        for a in ordered_actions:
+            m = state.action_to_string(a)
+            result = search(state.child(a), alpha=alpha, beta=beta, path=[m] + path, ply=ply+1) #Eval obj
 
             nodes_checked += result.nodes
 
             if result.score > evaluation:
-                best_move = [m]
+                best_path = result.moves
                 evaluation = result.score
             
             alpha = max(alpha, evaluation)
@@ -122,4 +124,4 @@ def search(state, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIA
             if beta <= alpha:
                 break
 
-        return Eval(score=evaluation, nodes=nodes_checked, moves=path + best_move)
+        return Eval(score=evaluation, nodes=nodes_checked, moves=best_path)

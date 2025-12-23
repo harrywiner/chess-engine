@@ -86,13 +86,13 @@ def compute_phase(positions: Positions) -> float:
 
     return min(1.0, max(0.0, phase / MAX_PHASE))
 
-def king_in_center(ctx: FeatureContext) -> int:
+def king_in_center(ctx: FeatureContext) -> tuple[int, int]:
     """
     Accessory to evaluation, in set [1,0,-1]. Does not scale to centipawns
     """
     white_center = int(ctx.positions["K"][0][1] in [3, 4, 5])
     black_center = int(ctx.positions["k"][0][1] in [3, 4, 5])
-    return white_center - black_center
+    return (white_center, black_center)
 
 def king_not_backrank(ctx: FeatureContext) -> float:
     """
@@ -110,11 +110,11 @@ def king_not_on_back_two_ranks(ctx: FeatureContext) -> float:
     black_third_rank = int(ctx.positions["k"][0][0] <= 5)
     return white_third_rank - black_third_rank
 
-def can_castle(ctx: FeatureContext) -> float:
+def can_castle(ctx: FeatureContext) -> tuple[int, int]:
     """
     Accessory to evaluation, in set [1,0,-1]. Does not scale to centipawns
     """
     castle_string = ctx.fen.split(" ")[2]
     white_can_castle = int("K" in castle_string or "Q" in castle_string)
     black_can_castle = int("k" in castle_string or "q" in castle_string)
-    return white_can_castle - black_can_castle
+    return (white_can_castle, black_can_castle)

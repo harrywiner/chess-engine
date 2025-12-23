@@ -39,12 +39,14 @@ def king_in_center_and_no_castle(ctx: FeatureContext) -> int:
     If the king is unable to castle, being that it has moved, or both rooks have moved
     At worst 300 centipawns, scaled with game phase. Not important in middlegame or endgame
     """
-    in_center = king_in_center(ctx)
-    castle = can_castle(ctx)
-    return (in_center + (1 - castle)) * 300 * ctx.game_phase**2
+    (white_in_center, black_in_center) = king_in_center(ctx)
+    (white_can_castle, black_can_castle)= can_castle(ctx)
+    white_val = -1 * (white_in_center + (1 - white_can_castle)) * 200 * ctx.game_phase**2 
+    black_val = -1 * (black_in_center + (1 - black_can_castle)) * 200 * ctx.game_phase**2
+    return white_val - black_val
 
 def king_not_on_back_rank(ctx: FeatureContext) -> int:
-    return king_not_on_back_two_ranks(ctx) * 200 * ctx.game_phase
+    return -1 * king_not_on_back_two_ranks(ctx) * 100 * ctx.game_phase
 
 def evaluate_piece_squares(
     ctx: FeatureContext,

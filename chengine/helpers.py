@@ -37,6 +37,8 @@ def moves_to_pgn(
         white_move = moves[i]
         black_move = moves[i + 1] if i + 1 < len(moves) else ""
         body.append(f"{move_number}. {white_move} {black_move}".strip())
+        if move_number % 10 == 0:
+            body.append("\n")
 
     return "\n".join(header + [" ".join(body), result])
 

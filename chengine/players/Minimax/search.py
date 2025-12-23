@@ -59,7 +59,9 @@ def get_best_move(state, depth: int=DEFAULT_DEPTH) -> Tuple[int, Eval]:
     ordered_actions.append(eldest_move)
     results.append(eldest_brother)
 
-    return func(zip(ordered_actions, results), key=lambda x: x[1])
+    (best_move, best_eval) = func(zip(ordered_actions, results), key=lambda x: x[1])
+    best_eval.nodes = sum([e.nodes for e in results])
+    return best_move, best_eval
 
 def search(state, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIAL, path=[], ply=0) -> Eval:
     """
@@ -92,8 +94,8 @@ def search(state, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIA
     if state.current_player() == 0: # black
         evaluation = float('inf')
         for a in ordered_actions:
-            m = state.action_to_string(a)
-            result = search(state.child(a), alpha=alpha, beta=beta, path=[m] + path, ply=ply+1) #Eval obj
+            m = state.action_to_string(state.current_player(),a)
+            result = search(state.child(a), alpha=alpha, beta=beta, path=path + [m], ply=ply+1) #Eval obj
 
             nodes_checked += result.nodes
 
@@ -110,8 +112,8 @@ def search(state, max_depth=DEFAULT_DEPTH, alpha=-BETA_INITIAL, beta=BETA_INITIA
     else: # white
         evaluation = float('-inf')
         for a in ordered_actions:
-            m = state.action_to_string(a)
-            result = search(state.child(a), alpha=alpha, beta=beta, path=[m] + path, ply=ply+1) #Eval obj
+            m = state.action_to_string(state.current_player(),a)
+            result = search(state.child(a), alpha=alpha, beta=beta, path=path + [m], ply=ply+1) #Eval obj
 
             nodes_checked += result.nodes
 

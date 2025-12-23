@@ -12,7 +12,7 @@ flags.DEFINE_string('entrypoint', 'main', 'Entrypoint function to call, \'main\'
 
 def main(*args, **kwargs):
     if FLAGS.entrypoint == 'test':
-        test_main()
+        test_main(args)
     else:
         game_main(*args, **kwargs)
 
